@@ -18,6 +18,7 @@ export interface RawEntryInput {
   deliveryApp?: string;
   locationAddresses?: string[];
   photo?: string;
+  ingredients?: string[];
 }
 
 export function parseEntryInput(body: unknown): RawEntryInput {
@@ -66,6 +67,12 @@ export function parseEntryInput(body: unknown): RawEntryInput {
     photo:
       typeof b.photo === "string" && PHOTO_PATH_PATTERN.test(b.photo)
         ? b.photo
+        : undefined,
+    ingredients:
+      mode === "Eat In" && Array.isArray(b.ingredients)
+        ? b.ingredients
+            .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
+            .map((v) => v.trim())
         : undefined,
   };
 }

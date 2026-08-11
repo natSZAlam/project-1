@@ -6,6 +6,10 @@ A shared decision-making app for figuring out what to eat — for two.
 - **Catalog** — log restaurants, delivery spots, and home meals you both like as a photo-forward Pinterest-style masonry grid; browse by category, add/edit/delete entries, attach a photo of the food.
 - **Distances** — set your home & university once in Settings (gear icon, top right) and every Eat Out spot shows how far it is from each — including the nearest branch, for places with more than one location.
 - **Quick Add** — paste a Google Maps share link on the Catalog screen and it pulls the restaurant's name, address, and a best-guess cuisine category into a pre-filled entry for you to check over and save.
+- **Pantry filter** — list what's in your kitchen (Decide screen, "Pantry" button) and toggle "Only what I can make" to narrow Eat In suggestions to recipes you can fully cook without a shopping trip.
+- **Plan** — a 7-day grid (with week navigation) to line up what you're eating each day in advance, picked from your catalog or typed freeform.
+- **History** — log what you actually ate with an optional amount spent; see a day streak, monthly spend totals, and a full chronological history.
+- **Installable** — has a web app manifest + icons, so "Add to Home Screen" on iOS/Android gives it a real app icon and launches full-screen, no browser chrome.
 
 Built with Next.js (App Router) + Tailwind CSS. Data is stored in `data/entries.json` on the server (photos in `public/uploads/`), so it persists across restarts and is shared by anyone who opens the app — no login required. The design (bold-primary-color, thick-outline "neubrutalism" look, Fredoka + Nunito type, drifting background clouds and coin-flip flourishes) was generated with the [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max) skill's design system reasoning engine.
 
@@ -18,7 +22,7 @@ npm run dev
 
 Then open http://localhost:3000 (or the same URL from your phone if it's on the same Wi-Fi as the machine running the server, e.g. `http://<your-computer's-local-ip>:3000`).
 
-`data/entries.json` and `data/settings.json` are created automatically on first run (entries seeded with a handful of example entries you can edit or delete) and are gitignored, along with `public/uploads/` (your photos), since they're your personal, evolving data rather than app code.
+`data/*.json` (entries, settings, pantry, plan, history) are created automatically on first run — entries seeded with a handful of example entries you can edit or delete — and are gitignored along with `public/uploads/` (your photos), since they're your personal, evolving data rather than app code.
 
 ### Photos
 
@@ -33,6 +37,14 @@ Addresses are geocoded with [OpenStreetMap's Nominatim](https://nominatim.org/) 
 Works by reading the restaurant name and coordinates straight out of the URL itself (Google Maps encodes them there) — no Places API key needed. Short links (`maps.app.goo.gl`, `goo.gl/maps`) get resolved first since the useful bits only show up in the expanded URL. The cuisine category is a best-effort keyword guess from the place name (e.g. "Trattoria" → Italian, "Sushi" → Japanese) — it's often right, sometimes wrong, and always editable in the review form before you save. Like distance lookups, this needs the server to have internet access; a link that can't be resolved shows a clear error instead of a bad guess.
 
 Not built (out of scope for now, revisit if you want it): importing from a screenshot. Doing that reliably needs an AI vision model to actually read the image, not just OCR, which means wiring up a paid API key — happy to add it if you decide it's worth that tradeoff.
+
+### Pantry filter
+
+Give a recipe a comma-separated ingredients list when adding/editing an Eat In entry, then keep your pantry up to date from the Decide screen. "Only what I can make" only matches recipes where **every** listed ingredient is in your pantry (case-insensitive, exact word match — "tomato" won't match "tomatoes"), so it's deliberately strict: a recipe with no ingredients listed never matches, rather than being treated as "anything goes."
+
+### Plan vs. History
+
+These are two different directions on purpose. **Plan** is forward-looking — what you intend to eat this week — and doesn't affect anything else; assigning a day doesn't create a History entry, and nothing happens automatically when the day passes. **History** is backward-looking — what you actually ate — logged by hand via "Log a Meal" (optionally linked to a catalog entry, with a date and amount spent). The day streak counts consecutive days with at least one History entry; today doesn't break the streak until the day is over, so logging can wait until after dinner.
 
 ## Production
 

@@ -19,6 +19,18 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   title: "Tonight's Menu",
   description: "A shared decision-making tool for what to eat tonight.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Tonight's Menu",
+  },
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

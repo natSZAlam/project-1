@@ -52,6 +52,9 @@ export default function EntryForm({
       (startMode === "Eat Out" ? [""] : []),
   );
   const [deliveryApp, setDeliveryApp] = useState(initial?.deliveryApp ?? "");
+  const [ingredients, setIngredients] = useState(
+    (initial?.ingredients ?? []).join(", "),
+  );
   const [goTo, setGoTo] = useState(initial?.goTo ?? "");
   const [vibes, setVibes] = useState<string[]>(initial?.vibes ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? "");
@@ -151,6 +154,13 @@ export default function EntryForm({
             : undefined,
         deliveryApp:
           mode === "Order In" ? deliveryApp.trim() || undefined : undefined,
+        ingredients:
+          mode === "Eat In"
+            ? ingredients
+                .split(",")
+                .map((i) => i.trim())
+                .filter(Boolean)
+            : undefined,
         goTo: goTo.trim() || undefined,
         vibes,
         notes: notes.trim() || undefined,
@@ -260,6 +270,29 @@ export default function EntryForm({
           ))}
         </div>
       </div>
+
+      {mode === "Eat In" && (
+        <div>
+          <label
+            htmlFor="entry-ingredients"
+            className="block text-xs font-bold uppercase tracking-wide text-muted-foreground"
+          >
+            Ingredients
+          </label>
+          <input
+            id="entry-ingredients"
+            type="text"
+            value={ingredients}
+            onChange={(e) => setIngredients(e.target.value)}
+            placeholder="e.g. eggs, spinach, cheddar, mushrooms"
+            className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
+          />
+          <p className="mt-1.5 text-xs font-bold text-muted-foreground">
+            Comma-separated. Powers the pantry filter on Decide — leave blank
+            to skip it for this recipe.
+          </p>
+        </div>
+      )}
 
       {mode === "Eat Out" && (
         <div>

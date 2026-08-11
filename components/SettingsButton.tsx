@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Settings as SettingsIcon, CheckCircle2, AlertTriangle } from "lucide-react";
 import Modal from "@/components/Modal";
-import type { Settings } from "@/lib/types";
+import { DEFAULT_CURRENCY, type Settings } from "@/lib/types";
 
 type FieldStatus = "unknown" | "found" | "not-found";
 
@@ -14,6 +14,7 @@ export default function SettingsButton() {
   const [saving, setSaving] = useState(false);
   const [home, setHome] = useState("");
   const [university, setUniversity] = useState("");
+  const [currency, setCurrency] = useState(DEFAULT_CURRENCY);
   const [homeStatus, setHomeStatus] = useState<FieldStatus>("unknown");
   const [uniStatus, setUniStatus] = useState<FieldStatus>("unknown");
 
@@ -24,6 +25,7 @@ export default function SettingsButton() {
       .then((settings: Settings) => {
         setHome(settings.home?.address ?? "");
         setUniversity(settings.university?.address ?? "");
+        setCurrency(settings.currency ?? DEFAULT_CURRENCY);
         setHomeStatus(settings.home ? (settings.home.geo ? "found" : "not-found") : "unknown");
         setUniStatus(
           settings.university ? (settings.university.geo ? "found" : "not-found") : "unknown",
@@ -38,7 +40,7 @@ export default function SettingsButton() {
       const res = await fetch("/api/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ home, university }),
+        body: JSON.stringify({ home, university, currency }),
       });
       const settings: Settings = await res.json();
       setHomeStatus(settings.home ? (settings.home.geo ? "found" : "not-found") : "unknown");
@@ -87,6 +89,28 @@ export default function SettingsButton() {
               status={uniStatus}
               disabled={saving}
             />
+
+            <div>
+              <label
+                htmlFor="settings-currency"
+                className="block text-xs font-extrabold uppercase tracking-wide text-muted-foreground"
+              >
+                Currency
+              </label>
+              <input
+                id="settings-currency"
+                type="text"
+                value={currency}
+                disabled={saving}
+                onChange={(e) => setCurrency(e.target.value)}
+                placeholder="e.g. $ or zł"
+                maxLength={6}
+                className="mt-1.5 w-24 rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25 disabled:opacity-60"
+              />
+              <p className="mt-1 text-xs font-bold text-muted-foreground">
+                Used on the History screen&apos;s spend tracker.
+              </p>
+            </div>
 
             <div className="flex items-center gap-2 pt-1">
               <button

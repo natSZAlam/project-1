@@ -7,6 +7,7 @@ import {
   categoriesForMode,
   type Entry,
   type Mode,
+  type PantryState,
   type Settings,
   MODES,
 } from "@/lib/types";
@@ -14,6 +15,7 @@ import { collectVibeTags } from "@/lib/vibes";
 import VibeTag from "@/components/VibeTag";
 import ResultTicket from "@/components/ResultTicket";
 import StarBurst from "@/components/StarBurst";
+import PantryButton from "@/components/PantryButton";
 
 type ModeFilter = "Either" | Mode;
 type Status = "idle" | "shuffling" | "revealed";
@@ -30,9 +32,11 @@ const MODE_FILTER_COLOR: Record<ModeFilter, string> = {
 export default function DecideView({
   initialEntries,
   settings,
+  pantry,
 }: {
   initialEntries: Entry[];
   settings: Settings;
+  pantry: PantryState;
 }) {
   const entries = initialEntries;
   const availableVibes = useMemo(() => collectVibeTags(entries), [entries]);
@@ -40,6 +44,8 @@ export default function DecideView({
   const [mode, setMode] = useState<ModeFilter>("Either");
   const [category, setCategory] = useState<string | null>(null);
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
+  const [pantryItems, setPantryItems] = useState<string[]>(pantry.items);
+  const [pantryOnly, setPantryOnly] = useState(false);
 
   const [status, setStatus] = useState<Status>("idle");
   const [pool, setPool] = useState<Entry[]>([]);
@@ -48,18 +54,25 @@ export default function DecideView({
   const categoryOptions = mode === "Either" ? [] : categoriesForMode(mode);
 
   const matches = useMemo(() => {
+    const pantryLower = pantryItems.map((i) => i.toLowerCase());
     return entries.filter((entry) => {
       if (mode !== "Either" && entry.mode !== mode) return false;
       if (category && entry.category !== category) return false;
       if (!selectedVibes.every((v) => entry.vibes.includes(v))) return false;
+      if (pantryOnly) {
+        if (entry.mode !== "Eat In") return false;
+        const needed = entry.ingredients ?? [];
+        if (needed.length === 0) return false;
+        if (!needed.every((ing) => pantryLower.includes(ing.toLowerCase()))) return false;
+      }
       return true;
     });
-  }, [entries, mode, category, selectedVibes]);
+  }, [entries, mode, category, selectedVibes, pantryOnly, pantryItems]);
 
   // Filters changed: the previous pick may no longer be a valid match.
   // Adjusting state during render (React's recommended alternative to an
   // effect here) avoids an extra commit just to clear stale results.
-  const filtersKey = `${mode}|${category}|${selectedVibes.join(",")}`;
+  const filtersKey = `${mode}|${category}|${selectedVibes.join(",")}|${pantryOnly}`;
   const [prevFiltersKey, setPrevFiltersKey] = useState(filtersKey);
   if (filtersKey !== prevFiltersKey) {
     setPrevFiltersKey(filtersKey);
@@ -181,6 +194,27 @@ export default function DecideView({
               />
             ))}
           </div>
+        </div>
+
+        <div>
+          <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
+            Pantry
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <PantryButton items={pantryItems} onChange={setPantryItems} />
+            <VibeTag
+              as="button"
+              label="Only what I can make"
+              selected={pantryOnly}
+              onClick={() => setPantryOnly((v) => !v)}
+            />
+          </div>
+          {pantryOnly && pantryItems.length === 0 && (
+            <p className="mt-1.5 text-xs font-bold text-muted-foreground">
+              Your pantry is empty — add what you&apos;ve got and Eat In
+              recipes you can fully make will show up here.
+            </p>
+          )}
         </div>
       </section>
 

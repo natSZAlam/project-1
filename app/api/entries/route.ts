@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
       deliveryApp: raw.deliveryApp,
       locations,
       photo: raw.photo,
+      ingredients: raw.ingredients,
     };
 
     const entry = await createEntry(input);

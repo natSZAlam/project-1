@@ -24,10 +24,13 @@ export async function PUT(request: NextRequest) {
 
   const home = await resolvePoint(b.home);
   const university = await resolvePoint(b.university);
+  const currency =
+    typeof b.currency === "string" && b.currency.trim() ? b.currency.trim().slice(0, 6) : undefined;
 
   const settings: Settings = {};
   if (home) settings.home = home;
   if (university) settings.university = university;
+  if (currency) settings.currency = currency;
 
   const saved = await writeSettings(settings);
   return NextResponse.json(saved);

@@ -47,4 +47,7 @@ __pycache__/
 # app data (persisted locally, not committed)
 /data/entries.json
 /data/settings.json
+/data/pantry.json
+/data/plan.json
+/data/log.json
 /public/uploads/
