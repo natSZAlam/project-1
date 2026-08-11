@@ -7,6 +7,7 @@ import {
   MODES,
   type Entry,
   type EntryDraft,
+  type EntryPrefill,
   type Mode,
 } from "@/lib/types";
 import VibeTag from "@/components/VibeTag";
@@ -20,27 +21,35 @@ const DELIVERY_APP_SUGGESTIONS = [
 
 export default function EntryForm({
   initial,
+  prefill,
   availableVibes,
   onSubmit,
   onCancel,
   onDelete,
 }: {
   initial?: Entry;
+  /** Only consulted when `initial` is absent (i.e. creating fresh) — seeds
+   * the form from a Quick Add import instead of blank defaults. */
+  prefill?: EntryPrefill;
   availableVibes: string[];
   onSubmit: (input: EntryDraft) => Promise<void>;
   onCancel: () => void;
   onDelete?: () => void;
 }) {
-  const [name, setName] = useState(initial?.name ?? "");
+  const startMode = initial?.mode ?? prefill?.mode ?? "Eat In";
+
+  const [name, setName] = useState(initial?.name ?? prefill?.name ?? "");
   const [photo, setPhoto] = useState(initial?.photo);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [mode, setMode] = useState<Mode>(initial?.mode ?? "Eat In");
+  const [mode, setMode] = useState<Mode>(startMode);
   const [category, setCategory] = useState<string>(
-    initial?.category ?? categoriesForMode(initial?.mode ?? "Eat In")[0],
+    initial?.category ?? prefill?.category ?? categoriesForMode(startMode)[0],
   );
   const [locations, setLocations] = useState<string[]>(
-    initial?.locations?.map((l) => l.address) ?? [],
+    initial?.locations?.map((l) => l.address) ??
+      prefill?.locations ??
+      (startMode === "Eat Out" ? [""] : []),
   );
   const [deliveryApp, setDeliveryApp] = useState(initial?.deliveryApp ?? "");
   const [goTo, setGoTo] = useState(initial?.goTo ?? "");

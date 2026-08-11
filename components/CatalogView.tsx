@@ -6,6 +6,7 @@ import {
   ALL_CATEGORIES,
   type Entry,
   type EntryDraft,
+  type EntryPrefill,
   type Settings,
 } from "@/lib/types";
 import { collectVibeTags } from "@/lib/vibes";
@@ -14,6 +15,7 @@ import VibeTag from "@/components/VibeTag";
 import Modal from "@/components/Modal";
 import EntryForm from "@/components/EntryForm";
 import DistanceBadges from "@/components/DistanceBadges";
+import GoogleMapsImportButton from "@/components/GoogleMapsImportButton";
 
 const TABS = ["All", ...ALL_CATEGORIES];
 
@@ -37,6 +39,7 @@ export default function CatalogView({
   const [entries, setEntries] = useState(initialEntries);
   const [activeTab, setActiveTab] = useState<string>("All");
   const [modal, setModal] = useState<"create" | Entry | null>(null);
+  const [prefill, setPrefill] = useState<EntryPrefill | null>(null);
   const [toastCount, setToastCount] = useState(0);
 
   const availableVibes = useMemo(() => collectVibeTags(entries), [entries]);
@@ -64,6 +67,7 @@ export default function CatalogView({
       [...prev, created].sort((a, b) => a.name.localeCompare(b.name)),
     );
     setModal(null);
+    setPrefill(null);
     setToastCount((c) => c + 1);
   }
 
@@ -93,6 +97,11 @@ export default function CatalogView({
       setEntries((prev) => prev.filter((e) => e.id !== entry.id));
       setModal(null);
     }
+  }
+
+  function closeModal() {
+    setModal(null);
+    setPrefill(null);
   }
 
   return (
@@ -128,14 +137,22 @@ export default function CatalogView({
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={() => setModal("create")}
-        className="block-btn flex w-full items-center justify-center gap-2 rounded-2xl bg-accent py-3 text-sm font-extrabold text-accent-foreground"
-      >
-        <Plus size={18} aria-hidden="true" />
-        Add to the Catalog
-      </button>
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={() => setModal("create")}
+          className="block-btn flex w-full items-center justify-center gap-2 rounded-2xl bg-accent py-3 text-sm font-extrabold text-accent-foreground"
+        >
+          <Plus size={18} aria-hidden="true" />
+          Add to the Catalog
+        </button>
+        <GoogleMapsImportButton
+          onImported={(imported) => {
+            setPrefill(imported);
+            setModal("create");
+          }}
+        />
+      </div>
 
       {filtered.length === 0 ? (
         <p
@@ -231,17 +248,18 @@ export default function CatalogView({
       {modal && (
         <Modal
           title={modal === "create" ? "Add to the Catalog" : "Edit Entry"}
-          onClose={() => setModal(null)}
+          onClose={closeModal}
         >
           <EntryForm
             initial={modal === "create" ? undefined : modal}
+            prefill={modal === "create" ? (prefill ?? undefined) : undefined}
             availableVibes={availableVibes}
             onSubmit={(input) =>
               modal === "create"
                 ? handleCreate(input)
                 : handleUpdate(modal.id, input)
             }
-            onCancel={() => setModal(null)}
+            onCancel={closeModal}
             onDelete={
               modal === "create" ? undefined : () => handleDelete(modal)
             }

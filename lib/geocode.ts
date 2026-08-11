@@ -50,3 +50,24 @@ export async function geocodeAll(addresses: string[]): Promise<EntryLocation[]> 
   }
   return results;
 }
+
+/** Coordinates -> a human-readable address, for when we already have a pin
+ * (e.g. from a Google Maps link) but need something to show/edit as text. */
+export async function reverseGeocode(geo: GeoPoint): Promise<string | null> {
+  await throttle();
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${geo.lat}&lon=${geo.lng}`;
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "TonightsMenu/1.0 (personal two-person meal-decision app)",
+        "Accept-Language": "en",
+      },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { display_name?: string };
+    return typeof data.display_name === "string" ? data.display_name : null;
+  } catch {
+    return null;
+  }
+}

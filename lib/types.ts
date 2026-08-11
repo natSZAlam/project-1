@@ -81,6 +81,16 @@ export type EntryDraft = Omit<EntryInput, "locations"> & {
   locations?: string[];
 };
 
+/** Seed values for a fresh (not-yet-saved) entry — e.g. from a Quick Add
+ * import. Every field is optional; whatever's missing keeps the form's
+ * normal default. */
+export interface EntryPrefill {
+  name?: string;
+  mode?: Mode;
+  category?: string;
+  locations?: string[];
+}
+
 export interface ReferencePoint {
   address: string;
   geo: GeoPoint | null;

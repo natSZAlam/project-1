@@ -5,6 +5,7 @@ A shared decision-making app for figuring out what to eat — for two.
 - **Decide** — filter by mode, category, and vibe, then punch the "?" block for a random pick from your catalog.
 - **Catalog** — log restaurants, delivery spots, and home meals you both like as a photo-forward Pinterest-style masonry grid; browse by category, add/edit/delete entries, attach a photo of the food.
 - **Distances** — set your home & university once in Settings (gear icon, top right) and every Eat Out spot shows how far it is from each — including the nearest branch, for places with more than one location.
+- **Quick Add** — paste a Google Maps share link on the Catalog screen and it pulls the restaurant's name, address, and a best-guess cuisine category into a pre-filled entry for you to check over and save.
 
 Built with Next.js (App Router) + Tailwind CSS. Data is stored in `data/entries.json` on the server (photos in `public/uploads/`), so it persists across restarts and is shared by anyone who opens the app — no login required. The design (bold-primary-color, thick-outline "neubrutalism" look, Fredoka + Nunito type, drifting background clouds and coin-flip flourishes) was generated with the [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max) skill's design system reasoning engine.
 
@@ -26,6 +27,12 @@ Uploading a photo on an entry saves it straight to `public/uploads/` and serves 
 ### Distances to home & university
 
 Addresses are geocoded with [OpenStreetMap's Nominatim](https://nominatim.org/) — free, no API key, but it **requires the server to have internet access** (works fine on a normal laptop; won't work in a fully offline/sandboxed environment). Saving an Eat Out entry or your Settings addresses makes one geocoding request per address, so adding several locations at once takes a couple of seconds (Nominatim's usage policy caps free requests at ~1/second). Distances shown are straight-line ("as the crow flies"), not driving distance — there's no routing API wired up. If an address can't be found, the entry still saves fine; it just won't show a distance until you fix the address text.
+
+### Quick Add from Google Maps
+
+Works by reading the restaurant name and coordinates straight out of the URL itself (Google Maps encodes them there) — no Places API key needed. Short links (`maps.app.goo.gl`, `goo.gl/maps`) get resolved first since the useful bits only show up in the expanded URL. The cuisine category is a best-effort keyword guess from the place name (e.g. "Trattoria" → Italian, "Sushi" → Japanese) — it's often right, sometimes wrong, and always editable in the review form before you save. Like distance lookups, this needs the server to have internet access; a link that can't be resolved shows a clear error instead of a bad guess.
+
+Not built (out of scope for now, revisit if you want it): importing from a screenshot. Doing that reliably needs an AI vision model to actually read the image, not just OCR, which means wiring up a paid API key — happy to add it if you decide it's worth that tradeoff.
 
 ## Production
 
