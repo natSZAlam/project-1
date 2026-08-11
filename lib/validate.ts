@@ -1,6 +1,20 @@
-import { MODES, categoriesForMode, type EntryInput } from "./types";
+import { MODES, categoriesForMode, type Mode } from "./types";
 
-export function parseEntryInput(body: unknown): EntryInput {
+/** What the client can send us for an entry: everything except `locations`,
+ * which arrives as raw address strings and gets geocoded server-side by the
+ * route handler (kept out of this pure-validation module on purpose). */
+export interface RawEntryInput {
+  name: string;
+  mode: Mode;
+  category: string;
+  vibes: string[];
+  goTo?: string;
+  notes?: string;
+  deliveryApp?: string;
+  locationAddresses?: string[];
+}
+
+export function parseEntryInput(body: unknown): RawEntryInput {
   if (typeof body !== "object" || body === null) {
     throw new Error("Invalid request body");
   }
@@ -24,22 +38,24 @@ export function parseEntryInput(body: unknown): EntryInput {
     ? b.vibes.filter((v): v is string => typeof v === "string" && v.trim().length > 0)
     : [];
 
-  const entry: EntryInput = {
+  const locationAddresses =
+    mode === "Eat Out" && Array.isArray(b.locations)
+      ? b.locations
+          .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
+          .map((v) => v.trim())
+      : undefined;
+
+  return {
     name,
     mode: mode as (typeof MODES)[number],
     category,
     vibes,
-    goTo: typeof b.goTo === "string" ? b.goTo.trim() : undefined,
-    notes: typeof b.notes === "string" ? b.notes.trim() : undefined,
-    location:
-      mode === "Eat Out" && typeof b.location === "string"
-        ? b.location.trim()
-        : undefined,
+    goTo: typeof b.goTo === "string" ? b.goTo.trim() || undefined : undefined,
+    notes: typeof b.notes === "string" ? b.notes.trim() || undefined : undefined,
     deliveryApp:
       mode === "Order In" && typeof b.deliveryApp === "string"
-        ? b.deliveryApp.trim()
+        ? b.deliveryApp.trim() || undefined
         : undefined,
+    locationAddresses,
   };
-
-  return entry;
 }

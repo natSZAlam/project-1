@@ -1,11 +1,12 @@
 import { listEntries } from "@/lib/db";
+import { readSettings } from "@/lib/settingsStore";
 import PageHeader from "@/components/PageHeader";
 import DecideView from "@/components/DecideView";
 
 export const dynamic = "force-dynamic";
 
 export default async function DecidePage() {
-  const entries = await listEntries();
+  const [entries, settings] = await Promise.all([listEntries(), readSettings()]);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -14,7 +15,7 @@ export default async function DecidePage() {
         title="What Are We Feeling?"
         subtitle="pick your mood, we'll pick the meal"
       />
-      <DecideView initialEntries={entries} />
+      <DecideView initialEntries={entries} settings={settings} />
     </div>
   );
 }

@@ -1,9 +1,19 @@
 import { MapPin, Bike as BikeIcon, Star } from "lucide-react";
-import type { Entry } from "@/lib/types";
+import type { Entry, Settings } from "@/lib/types";
 import ModeBadge from "./ModeBadge";
 import VibeTag from "./VibeTag";
+import DistanceBadges from "./DistanceBadges";
+import LocationBreakdown from "./LocationBreakdown";
 
-export default function ResultTicket({ entry }: { entry: Entry }) {
+export default function ResultTicket({
+  entry,
+  settings,
+}: {
+  entry: Entry;
+  settings: Settings;
+}) {
+  const locations = entry.locations ?? [];
+
   return (
     <div className="animate-pop-in block-panel mx-auto w-full max-w-md overflow-hidden">
       <div className="flex items-center justify-center gap-1.5 border-b-[3px] border-foreground bg-secondary py-2">
@@ -26,15 +36,28 @@ export default function ResultTicket({ entry }: { entry: Entry }) {
           </span>
         </div>
 
-        {(entry.location || entry.deliveryApp) && (
+        {entry.mode === "Eat Out" && locations.length === 1 && (
           <p className="mt-3 flex items-center justify-center gap-1.5 text-sm font-bold text-muted-foreground">
-            {entry.mode === "Eat Out" ? (
-              <MapPin size={15} aria-hidden="true" />
-            ) : (
-              <BikeIcon size={15} aria-hidden="true" />
-            )}
-            {entry.location || entry.deliveryApp}
+            <MapPin size={15} aria-hidden="true" />
+            {locations[0].address}
           </p>
+        )}
+
+        {entry.mode === "Order In" && entry.deliveryApp && (
+          <p className="mt-3 flex items-center justify-center gap-1.5 text-sm font-bold text-muted-foreground">
+            <BikeIcon size={15} aria-hidden="true" />
+            {entry.deliveryApp}
+          </p>
+        )}
+
+        {entry.mode === "Eat Out" && locations.length > 0 && (
+          <div className="mt-3 flex justify-center">
+            <DistanceBadges entry={entry} settings={settings} />
+          </div>
+        )}
+
+        {entry.mode === "Eat Out" && locations.length > 1 && (
+          <LocationBreakdown locations={locations} settings={settings} />
         )}
 
         {entry.goTo && (

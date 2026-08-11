@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import {
   categoriesForMode,
   MODES,
   type Entry,
-  type EntryInput,
+  type EntryDraft,
   type Mode,
 } from "@/lib/types";
 import VibeTag from "@/components/VibeTag";
@@ -27,7 +27,7 @@ export default function EntryForm({
 }: {
   initial?: Entry;
   availableVibes: string[];
-  onSubmit: (input: EntryInput) => Promise<void>;
+  onSubmit: (input: EntryDraft) => Promise<void>;
   onCancel: () => void;
   onDelete?: () => void;
 }) {
@@ -36,7 +36,9 @@ export default function EntryForm({
   const [category, setCategory] = useState<string>(
     initial?.category ?? categoriesForMode(initial?.mode ?? "Eat In")[0],
   );
-  const [location, setLocation] = useState(initial?.location ?? "");
+  const [locations, setLocations] = useState<string[]>(
+    initial?.locations?.map((l) => l.address) ?? [],
+  );
   const [deliveryApp, setDeliveryApp] = useState(initial?.deliveryApp ?? "");
   const [goTo, setGoTo] = useState(initial?.goTo ?? "");
   const [vibes, setVibes] = useState<string[]>(initial?.vibes ?? []);
@@ -59,6 +61,21 @@ export default function EntryForm({
     if (!options.includes(category)) {
       setCategory(options[0]);
     }
+    if (next === "Eat Out" && locations.length === 0) {
+      setLocations([""]);
+    }
+  }
+
+  function updateLocationAt(index: number, value: string) {
+    setLocations((prev) => prev.map((l, i) => (i === index ? value : l)));
+  }
+
+  function addLocationRow() {
+    setLocations((prev) => [...prev, ""]);
+  }
+
+  function removeLocationRow(index: number) {
+    setLocations((prev) => prev.filter((_, i) => i !== index));
   }
 
   function toggleVibe(vibe: string) {
@@ -92,7 +109,10 @@ export default function EntryForm({
         name: name.trim(),
         mode,
         category,
-        location: mode === "Eat Out" ? location.trim() || undefined : undefined,
+        locations:
+          mode === "Eat Out"
+            ? locations.map((l) => l.trim()).filter(Boolean)
+            : undefined,
         deliveryApp:
           mode === "Order In" ? deliveryApp.trim() || undefined : undefined,
         goTo: goTo.trim() || undefined,
@@ -162,17 +182,45 @@ export default function EntryForm({
 
       {mode === "Eat Out" && (
         <div>
-          <label htmlFor="entry-location" className="block text-xs font-bold uppercase tracking-wide text-muted-foreground">
-            Location
-          </label>
-          <input
-            id="entry-location"
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g. 12 Vine St"
-            className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
-          />
+          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Location{locations.length > 1 ? "s" : ""}
+          </p>
+          <div className="mt-1.5 space-y-2">
+            {locations.map((loc, i) => (
+              <div key={i} className="flex gap-1.5">
+                <input
+                  type="text"
+                  value={loc}
+                  onChange={(e) => updateLocationAt(i, e.target.value)}
+                  placeholder="e.g. 12 Vine St, Warsaw"
+                  aria-label={`Location ${i + 1}`}
+                  className="flex-1 rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
+                />
+                {locations.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeLocationRow(i)}
+                    aria-label="Remove location"
+                    className="block-btn rounded-2xl bg-card px-3 text-foreground"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addLocationRow}
+            className="block-btn mt-2 inline-flex items-center gap-1.5 rounded-2xl bg-muted px-3 py-1.5 text-xs font-extrabold text-foreground"
+          >
+            <Plus size={14} aria-hidden="true" />
+            Add another location
+          </button>
+          <p className="mt-1.5 text-xs font-bold text-muted-foreground">
+            We&apos;ll estimate straight-line distance to your home &amp;
+            university once saved.
+          </p>
         </div>
       )}
 

@@ -48,7 +48,9 @@
     "name": "Trattoria Bella",
     "mode": "Eat Out",
     "category": "Italian",
-    "location": "12 Vine St",
+    "locations": [
+      { "address": "12 Vine St, Warsaw", "geo": { "lat": 52.2297, "lng": 21.0122 } }
+    ],
     "goTo": "Truffle tagliatelle, split the tiramisu",
     "vibes": ["Date Night", "Special Occasion"],
     "notes": "Ask for the corner table.",
@@ -60,7 +62,10 @@
     "name": "Sakura Sushi House",
     "mode": "Eat Out",
     "category": "Japanese",
-    "location": "Riverside Mall",
+    "locations": [
+      { "address": "Riverside Mall, Warsaw", "geo": { "lat": 52.1867, "lng": 20.9739 } },
+      { "address": "Nowy Świat 15, Warsaw", "geo": { "lat": 52.2333, "lng": 21.0197 } }
+    ],
     "goTo": "Omakase for two, extra uni",
     "vibes": ["Special Occasion"],
     "notes": "Book ahead on weekends.",
@@ -72,7 +77,9 @@
     "name": "Pierogi Nook",
     "mode": "Eat Out",
     "category": "Polish",
-    "location": "Old Town Square",
+    "locations": [
+      { "address": "Rynek Starego Miasta, Warsaw", "geo": { "lat": 52.2496, "lng": 21.0122 } }
+    ],
     "goTo": "Potato & cheese pierogi, we always split a plate",
     "vibes": ["Comfort Food", "Budget-Friendly"],
     "notes": "",

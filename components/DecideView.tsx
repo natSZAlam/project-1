@@ -7,6 +7,7 @@ import {
   categoriesForMode,
   type Entry,
   type Mode,
+  type Settings,
   MODES,
 } from "@/lib/types";
 import { collectVibeTags } from "@/lib/vibes";
@@ -28,8 +29,10 @@ const MODE_FILTER_COLOR: Record<ModeFilter, string> = {
 
 export default function DecideView({
   initialEntries,
+  settings,
 }: {
   initialEntries: Entry[];
+  settings: Settings;
 }) {
   const entries = initialEntries;
   const availableVibes = useMemo(() => collectVibeTags(entries), [entries]);
@@ -249,7 +252,7 @@ export default function DecideView({
       {status === "revealed" && result && (
         <section className="relative space-y-4">
           <StarBurst key={`burst-${result.id}`} />
-          <ResultTicket key={result.id} entry={result} />
+          <ResultTicket key={result.id} entry={result} settings={settings} />
           <div className="flex justify-center">
             <button
               type="button"

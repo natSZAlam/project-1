@@ -44,13 +44,24 @@ export const DEFAULT_VIBE_TAGS = [
   "Healthy",
 ] as const;
 
+export interface GeoPoint {
+  lat: number;
+  lng: number;
+}
+
+export interface EntryLocation {
+  address: string;
+  /** null when geocoding failed or hasn't happened yet (e.g. no network at save time). */
+  geo: GeoPoint | null;
+}
+
 export interface Entry {
   id: string;
   name: string;
   mode: Mode;
   category: string;
-  /** Eat Out only */
-  location?: string;
+  /** Eat Out only — one or more branch addresses. */
+  locations?: EntryLocation[];
   /** Order In only */
   deliveryApp?: string;
   /** "Go-to order" (Eat Out / Order In) or "what you'd cook" (Eat In) */
@@ -62,3 +73,19 @@ export interface Entry {
 }
 
 export type EntryInput = Omit<Entry, "id" | "createdAt" | "updatedAt">;
+
+/** What the client actually sends: raw address strings, geocoded server-side. */
+export type EntryDraft = Omit<EntryInput, "locations"> & {
+  locations?: string[];
+};
+
+export interface ReferencePoint {
+  address: string;
+  geo: GeoPoint | null;
+}
+
+/** Shared "home" and "university" reference points used for distance display. */
+export interface Settings {
+  home?: ReferencePoint;
+  university?: ReferencePoint;
+}

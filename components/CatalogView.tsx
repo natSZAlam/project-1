@@ -2,12 +2,18 @@
 
 import { useMemo, useState } from "react";
 import { MapPin, Bike as BikeIcon, Pencil, Plus } from "lucide-react";
-import { ALL_CATEGORIES, type Entry, type EntryInput } from "@/lib/types";
+import {
+  ALL_CATEGORIES,
+  type Entry,
+  type EntryDraft,
+  type Settings,
+} from "@/lib/types";
 import { collectVibeTags } from "@/lib/vibes";
 import ModeBadge from "@/components/ModeBadge";
 import VibeTag from "@/components/VibeTag";
 import Modal from "@/components/Modal";
 import EntryForm from "@/components/EntryForm";
+import DistanceBadges from "@/components/DistanceBadges";
 
 const TABS = ["All", ...ALL_CATEGORIES];
 
@@ -23,8 +29,10 @@ const ROTATIONS = [-1.5, 1, -0.75, 1.5, -1.25, 0.75];
 
 export default function CatalogView({
   initialEntries,
+  settings,
 }: {
   initialEntries: Entry[];
+  settings: Settings;
 }) {
   const [entries, setEntries] = useState(initialEntries);
   const [activeTab, setActiveTab] = useState<string>("All");
@@ -40,7 +48,7 @@ export default function CatalogView({
     [entries, activeTab],
   );
 
-  async function handleCreate(input: EntryInput) {
+  async function handleCreate(input: EntryDraft) {
     const res = await fetch("/api/entries", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -57,7 +65,7 @@ export default function CatalogView({
     setModal(null);
   }
 
-  async function handleUpdate(id: string, input: EntryInput) {
+  async function handleUpdate(id: string, input: EntryDraft) {
     const res = await fetch(`/api/entries/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -149,15 +157,25 @@ export default function CatalogView({
                   </span>
                 </div>
 
-                {(entry.location || entry.deliveryApp) && (
+                {entry.mode === "Eat Out" && entry.locations && entry.locations.length > 0 && (
                   <p className="mt-2 flex items-center gap-1 text-xs font-bold text-muted-foreground">
-                    {entry.mode === "Eat Out" ? (
-                      <MapPin size={12} aria-hidden="true" />
-                    ) : (
-                      <BikeIcon size={12} aria-hidden="true" />
-                    )}
-                    {entry.location || entry.deliveryApp}
+                    <MapPin size={12} aria-hidden="true" />
+                    {entry.locations[0].address}
+                    {entry.locations.length > 1 && ` +${entry.locations.length - 1} more`}
                   </p>
+                )}
+
+                {entry.mode === "Order In" && entry.deliveryApp && (
+                  <p className="mt-2 flex items-center gap-1 text-xs font-bold text-muted-foreground">
+                    <BikeIcon size={12} aria-hidden="true" />
+                    {entry.deliveryApp}
+                  </p>
+                )}
+
+                {entry.mode === "Eat Out" && (
+                  <div className="mt-2">
+                    <DistanceBadges entry={entry} settings={settings} />
+                  </div>
                 )}
 
                 {entry.goTo && (

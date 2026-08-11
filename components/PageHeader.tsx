@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import SettingsButton from "@/components/SettingsButton";
 
 export default function PageHeader({
   eyebrow,
@@ -10,7 +11,8 @@ export default function PageHeader({
   subtitle?: string;
 }) {
   return (
-    <header className="border-b-4 border-foreground bg-primary px-5 pt-8 pb-6 text-center text-primary-foreground">
+    <header className="relative border-b-4 border-foreground bg-primary px-5 pt-8 pb-6 text-center text-primary-foreground">
+      <SettingsButton />
       <p className="stamp inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-secondary">
         <Star
           size={14}
