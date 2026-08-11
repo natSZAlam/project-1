@@ -252,3 +252,69 @@ body {
 .animate-coin-spin {
   animation: coin-spin 2.4s linear infinite;
 }
+
+/* Drifting background clouds --------------------------------------------- */
+
+.cloud {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50px;
+  opacity: 0.85;
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.cloud::before {
+  width: 60%;
+  height: 140%;
+  top: -60%;
+  left: 12%;
+}
+
+.cloud::after {
+  width: 45%;
+  height: 110%;
+  top: -45%;
+  left: 50%;
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-25vw);
+  }
+  to {
+    transform: translateX(125vw);
+  }
+}
+
+.animate-cloud-drift {
+  animation: cloud-drift linear infinite;
+}
+
+/* Toast ------------------------------------------------------------------ */
+
+@keyframes toast-in-out {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.9);
+  }
+  12%,
+  82% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.9);
+  }
+}
+
+.animate-toast {
+  animation: toast-in-out 1.6s ease both;
+}

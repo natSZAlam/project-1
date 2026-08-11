@@ -3,10 +3,10 @@
 A shared decision-making app for figuring out what to eat — for two.
 
 - **Decide** — filter by mode, category, and vibe, then punch the "?" block for a random pick from your catalog.
-- **Catalog** — log restaurants, delivery spots, and home meals you both like, Pinterest-style; browse by category, add/edit/delete entries.
+- **Catalog** — log restaurants, delivery spots, and home meals you both like as a photo-forward Pinterest-style masonry grid; browse by category, add/edit/delete entries, attach a photo of the food.
 - **Distances** — set your home & university once in Settings (gear icon, top right) and every Eat Out spot shows how far it is from each — including the nearest branch, for places with more than one location.
 
-Built with Next.js (App Router) + Tailwind CSS. Data is stored in `data/entries.json` on the server, so it persists across restarts and is shared by anyone who opens the app — no login required. The design (bold-primary-color, thick-outline "neubrutalism" look, Fredoka + Nunito type) was generated with the [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max) skill's design system reasoning engine.
+Built with Next.js (App Router) + Tailwind CSS. Data is stored in `data/entries.json` on the server (photos in `public/uploads/`), so it persists across restarts and is shared by anyone who opens the app — no login required. The design (bold-primary-color, thick-outline "neubrutalism" look, Fredoka + Nunito type, drifting background clouds and coin-flip flourishes) was generated with the [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max) skill's design system reasoning engine.
 
 ## Running it
 
@@ -17,7 +17,11 @@ npm run dev
 
 Then open http://localhost:3000 (or the same URL from your phone if it's on the same Wi-Fi as the machine running the server, e.g. `http://<your-computer's-local-ip>:3000`).
 
-`data/entries.json` and `data/settings.json` are created automatically on first run (entries seeded with a handful of example entries you can edit or delete) and are gitignored, since they're your personal, evolving data rather than app code.
+`data/entries.json` and `data/settings.json` are created automatically on first run (entries seeded with a handful of example entries you can edit or delete) and are gitignored, along with `public/uploads/` (your photos), since they're your personal, evolving data rather than app code.
+
+### Photos
+
+Uploading a photo on an entry saves it straight to `public/uploads/` and serves it back from there — no third-party image host needed. Accepts JPG/PNG/WEBP/GIF up to 8MB. Removing a photo from an entry just detaches it; the original file is left on disk (there's no cleanup job, since with two people casually adding photos it's not worth the complexity).
 
 ### Distances to home & university
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { MapPin, Bike as BikeIcon, Pencil, Plus } from "lucide-react";
+import { Coins, MapPin, Bike as BikeIcon, Pencil, Plus } from "lucide-react";
 import {
   ALL_CATEGORIES,
   type Entry,
@@ -37,6 +37,7 @@ export default function CatalogView({
   const [entries, setEntries] = useState(initialEntries);
   const [activeTab, setActiveTab] = useState<string>("All");
   const [modal, setModal] = useState<"create" | Entry | null>(null);
+  const [toastCount, setToastCount] = useState(0);
 
   const availableVibes = useMemo(() => collectVibeTags(entries), [entries]);
 
@@ -63,6 +64,7 @@ export default function CatalogView({
       [...prev, created].sort((a, b) => a.name.localeCompare(b.name)),
     );
     setModal(null);
+    setToastCount((c) => c + 1);
   }
 
   async function handleUpdate(id: string, input: EntryDraft) {
@@ -95,6 +97,20 @@ export default function CatalogView({
 
   return (
     <div className="px-4 pt-6 pb-10 space-y-5">
+      {toastCount > 0 && (
+        <div
+          key={toastCount}
+          className="animate-toast fixed left-1/2 top-4 z-50"
+        >
+          <div className="block-panel flex items-center gap-2 bg-secondary px-4 py-2 text-secondary-foreground">
+            <Coins className="animate-coin-spin" size={18} aria-hidden="true" />
+            <span className="font-display text-sm font-bold">
+              Saved to the Catalog!
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1">
         {TABS.map((tab) => (
           <button
@@ -122,7 +138,10 @@ export default function CatalogView({
       </button>
 
       {filtered.length === 0 ? (
-        <p className="block-panel border-dashed p-6 text-center font-display text-2xl font-bold text-muted-foreground">
+        <p
+          style={{ borderStyle: "dashed" }}
+          className="block-panel p-6 text-center font-display text-2xl font-bold text-muted-foreground"
+        >
           Nothing here yet.
         </p>
       ) : (
@@ -137,60 +156,72 @@ export default function CatalogView({
                   borderTopColor: MODE_ACCENT[entry.mode],
                   borderTopWidth: "6px",
                 }}
-                className="block-btn group w-full rounded-2xl bg-card p-3 text-left"
+                className="block-btn group w-full overflow-hidden rounded-2xl bg-card p-0 text-left"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-display text-base font-bold leading-tight text-foreground">
-                    {entry.name}
-                  </p>
-                  <Pencil
-                    size={14}
-                    className="mt-1 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
-                    aria-hidden="true"
+                {entry.photo && (
+                  // eslint-disable-next-line @next/next/no-img-element -- user-uploaded local file, no known dimensions for next/image
+                  <img
+                    src={entry.photo}
+                    alt=""
+                    loading="lazy"
+                    className="block w-full transition-transform duration-200 group-hover:scale-[1.03]"
                   />
-                </div>
-
-                <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                  <ModeBadge mode={entry.mode} className="px-2 py-0.5 text-[10px]" />
-                  <span className="block-chip bg-muted px-2 py-0.5 text-[10px] font-extrabold text-foreground">
-                    {entry.category}
-                  </span>
-                </div>
-
-                {entry.mode === "Eat Out" && entry.locations && entry.locations.length > 0 && (
-                  <p className="mt-2 flex items-center gap-1 text-xs font-bold text-muted-foreground">
-                    <MapPin size={12} aria-hidden="true" />
-                    {entry.locations[0].address}
-                    {entry.locations.length > 1 && ` +${entry.locations.length - 1} more`}
-                  </p>
                 )}
 
-                {entry.mode === "Order In" && entry.deliveryApp && (
-                  <p className="mt-2 flex items-center gap-1 text-xs font-bold text-muted-foreground">
-                    <BikeIcon size={12} aria-hidden="true" />
-                    {entry.deliveryApp}
-                  </p>
-                )}
-
-                {entry.mode === "Eat Out" && (
-                  <div className="mt-2">
-                    <DistanceBadges entry={entry} settings={settings} />
+                <div className="p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-display text-base font-bold leading-tight text-foreground">
+                      {entry.name}
+                    </p>
+                    <Pencil
+                      size={14}
+                      className="mt-1 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-hidden="true"
+                    />
                   </div>
-                )}
 
-                {entry.goTo && (
-                  <p className="mt-2 text-sm font-bold leading-snug text-foreground/80">
-                    {entry.goTo}
-                  </p>
-                )}
-
-                {entry.vibes.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {entry.vibes.map((vibe) => (
-                      <VibeTag key={vibe} label={vibe} />
-                    ))}
+                  <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                    <ModeBadge mode={entry.mode} className="px-2 py-0.5 text-[10px]" />
+                    <span className="block-chip bg-muted px-2 py-0.5 text-[10px] font-extrabold text-foreground">
+                      {entry.category}
+                    </span>
                   </div>
-                )}
+
+                  {entry.mode === "Eat Out" && entry.locations && entry.locations.length > 0 && (
+                    <p className="mt-2 flex items-center gap-1 text-xs font-bold text-muted-foreground">
+                      <MapPin size={12} aria-hidden="true" />
+                      {entry.locations[0].address}
+                      {entry.locations.length > 1 && ` +${entry.locations.length - 1} more`}
+                    </p>
+                  )}
+
+                  {entry.mode === "Order In" && entry.deliveryApp && (
+                    <p className="mt-2 flex items-center gap-1 text-xs font-bold text-muted-foreground">
+                      <BikeIcon size={12} aria-hidden="true" />
+                      {entry.deliveryApp}
+                    </p>
+                  )}
+
+                  {entry.mode === "Eat Out" && (
+                    <div className="mt-2">
+                      <DistanceBadges entry={entry} settings={settings} />
+                    </div>
+                  )}
+
+                  {entry.goTo && (
+                    <p className="mt-2 text-sm font-bold leading-snug text-foreground/80">
+                      {entry.goTo}
+                    </p>
+                  )}
+
+                  {entry.vibes.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {entry.vibes.map((vibe) => (
+                        <VibeTag key={vibe} label={vibe} />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </button>
             </li>
           ))}

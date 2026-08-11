@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       notes: raw.notes,
       deliveryApp: raw.deliveryApp,
       locations,
+      photo: raw.photo,
     };
 
     const entry = await createEntry(input);

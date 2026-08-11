@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fredoka, Nunito } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
+import Clouds from "@/components/Clouds";
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",
@@ -37,6 +38,7 @@ export default function RootLayout({
       className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <Clouds />
         <main className="flex-1 pb-24">{children}</main>
         <BottomNav />
       </body>

@@ -47,3 +47,4 @@ __pycache__/
 # app data (persisted locally, not committed)
 /data/entries.json
 /data/settings.json
+/public/uploads/

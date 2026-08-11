@@ -187,7 +187,7 @@ export default function DecideView({
       {/* Decide action */}
       <section className="text-center space-y-5">
         {hasNoMatches ? (
-          <div className="block-panel border-dashed p-6">
+          <div style={{ borderStyle: "dashed" }} className="block-panel p-6">
             <p className="font-display text-2xl font-bold text-muted-foreground">
               Nothing matches those filters yet!
             </p>

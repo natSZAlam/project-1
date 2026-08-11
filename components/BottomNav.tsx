@@ -32,8 +32,10 @@ export default function BottomNav() {
               aria-current={active ? "page" : undefined}
             >
               <Icon
+                key={active ? pathname : "inactive"}
                 size={22}
                 strokeWidth={active ? 2.75 : 2.25}
+                className={active ? "animate-pop-in" : ""}
                 aria-hidden="true"
               />
               {label}

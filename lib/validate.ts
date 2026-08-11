@@ -1,5 +1,10 @@
 import { MODES, categoriesForMode, type Mode } from "./types";
 
+/** Uploaded photos only ever live at /uploads/<uuid>.<ext> (see
+ * app/api/upload/route.ts) — reject anything else so this field can't be
+ * used to smuggle in an arbitrary URL or path. */
+const PHOTO_PATH_PATTERN = /^\/uploads\/[a-zA-Z0-9-]+\.(jpg|jpeg|png|webp|gif)$/;
+
 /** What the client can send us for an entry: everything except `locations`,
  * which arrives as raw address strings and gets geocoded server-side by the
  * route handler (kept out of this pure-validation module on purpose). */
@@ -12,6 +17,7 @@ export interface RawEntryInput {
   notes?: string;
   deliveryApp?: string;
   locationAddresses?: string[];
+  photo?: string;
 }
 
 export function parseEntryInput(body: unknown): RawEntryInput {
@@ -57,5 +63,9 @@ export function parseEntryInput(body: unknown): RawEntryInput {
         ? b.deliveryApp.trim() || undefined
         : undefined,
     locationAddresses,
+    photo:
+      typeof b.photo === "string" && PHOTO_PATH_PATTERN.test(b.photo)
+        ? b.photo
+        : undefined,
   };
 }

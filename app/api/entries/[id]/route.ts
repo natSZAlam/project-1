@@ -25,6 +25,7 @@ export async function PUT(
       notes: raw.notes,
       deliveryApp: raw.deliveryApp,
       locations,
+      photo: raw.photo,
     };
 
     const entry = await updateEntry(id, input);

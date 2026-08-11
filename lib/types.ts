@@ -68,6 +68,8 @@ export interface Entry {
   goTo?: string;
   vibes: string[];
   notes?: string;
+  /** Relative path under /public, e.g. "/uploads/xyz.jpg" */
+  photo?: string;
   createdAt: string;
   updatedAt: string;
 }

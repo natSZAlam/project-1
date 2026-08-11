@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { ImagePlus, Loader2, Plus, X } from "lucide-react";
 import {
   categoriesForMode,
   MODES,
@@ -32,6 +32,9 @@ export default function EntryForm({
   onDelete?: () => void;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
+  const [photo, setPhoto] = useState(initial?.photo);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>(initial?.mode ?? "Eat In");
   const [category, setCategory] = useState<string>(
     initial?.category ?? categoriesForMode(initial?.mode ?? "Eat In")[0],
@@ -78,6 +81,30 @@ export default function EntryForm({
     setLocations((prev) => prev.filter((_, i) => i !== index));
   }
 
+  async function handlePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "Could not upload photo.");
+      }
+      const { path } = (await res.json()) as { path: string };
+      setPhoto(path);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Could not upload photo.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   function toggleVibe(vibe: string) {
     setVibes((prev) =>
       prev.includes(vibe) ? prev.filter((v) => v !== vibe) : [...prev, vibe],
@@ -118,6 +145,7 @@ export default function EntryForm({
         goTo: goTo.trim() || undefined,
         vibes,
         notes: notes.trim() || undefined,
+        photo,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -139,6 +167,50 @@ export default function EntryForm({
           placeholder="e.g. Trattoria Bella"
           className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
         />
+      </div>
+
+      <div>
+        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          Photo
+        </p>
+        {photo ? (
+          <div className="relative mt-1.5 overflow-hidden rounded-2xl border-[3px] border-foreground">
+            {/* eslint-disable-next-line @next/next/no-img-element -- user-uploaded local file, no known dimensions for next/image */}
+            <img src={photo} alt="" className="block max-h-56 w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => setPhoto(undefined)}
+              aria-label="Remove photo"
+              className="block-btn absolute right-2 top-2 rounded-full bg-card p-1.5 text-foreground"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ) : (
+          <label
+            style={{ borderStyle: "dashed" }}
+            className="block-btn mt-1.5 flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-muted py-6 text-muted-foreground"
+          >
+            {uploading ? (
+              <Loader2 size={22} className="animate-spin" aria-hidden="true" />
+            ) : (
+              <ImagePlus size={22} aria-hidden="true" />
+            )}
+            <span className="text-xs font-extrabold">
+              {uploading ? "Uploading..." : "Add a photo"}
+            </span>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              onChange={handlePhotoSelect}
+              disabled={uploading}
+              className="sr-only"
+            />
+          </label>
+        )}
+        {uploadError && (
+          <p className="mt-1.5 text-xs font-bold text-destructive">{uploadError}</p>
+        )}
       </div>
 
       <div>
@@ -327,7 +399,7 @@ export default function EntryForm({
       <div className="flex items-center gap-2 pt-1">
         <button
           type="submit"
-          disabled={saving}
+          disabled={saving || uploading}
           className="block-btn flex-1 rounded-2xl bg-primary px-4 py-2.5 text-sm font-extrabold text-primary-foreground"
         >
           {saving ? "Saving..." : initial ? "Save Changes" : "Add Entry"}

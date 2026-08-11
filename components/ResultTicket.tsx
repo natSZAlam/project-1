@@ -24,6 +24,11 @@ export default function ResultTicket({
         <Star size={16} className="fill-foreground" aria-hidden="true" />
       </div>
 
+      {entry.photo && (
+        // eslint-disable-next-line @next/next/no-img-element -- user-uploaded local file, no known dimensions for next/image
+        <img src={entry.photo} alt="" className="block max-h-72 w-full object-cover" />
+      )}
+
       <div className="px-6 pt-5 pb-6">
         <h2 className="text-center font-display text-3xl font-bold text-primary">
           {entry.name}
