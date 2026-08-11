@@ -1,0 +1,118 @@
+[
+  {
+    "id": "seed-1",
+    "name": "Garlic Butter Steak",
+    "mode": "Eat In",
+    "category": "Meat",
+    "goTo": "Ribeye, garlic butter, cast-iron sear, roasted potatoes",
+    "vibes": ["Date Night", "Special Occasion"],
+    "notes": "Splurge on the good cut when it's on sale.",
+    "createdAt": "2026-01-05T18:00:00.000Z",
+    "updatedAt": "2026-01-05T18:00:00.000Z"
+  },
+  {
+    "id": "seed-2",
+    "name": "Sunday Carbonara",
+    "mode": "Eat In",
+    "category": "Pasta",
+    "goTo": "Guanciale, pecorino, black pepper, fresh egg yolk",
+    "vibes": ["Comfort Food", "Quick & Easy"],
+    "notes": "",
+    "createdAt": "2026-01-06T18:00:00.000Z",
+    "updatedAt": "2026-01-06T18:00:00.000Z"
+  },
+  {
+    "id": "seed-3",
+    "name": "Lemon Butter Salmon",
+    "mode": "Eat In",
+    "category": "Fish",
+    "goTo": "Pan-seared salmon, lemon butter sauce, asparagus",
+    "vibes": ["Healthy", "Quick & Easy"],
+    "notes": "20 minutes start to finish.",
+    "createdAt": "2026-01-07T18:00:00.000Z",
+    "updatedAt": "2026-01-07T18:00:00.000Z"
+  },
+  {
+    "id": "seed-4",
+    "name": "Big Weekend Omelette",
+    "mode": "Eat In",
+    "category": "Breakfast",
+    "goTo": "Cheddar, spinach, mushrooms, hot sauce",
+    "vibes": ["Comfort Food", "Budget-Friendly"],
+    "notes": "Lazy Saturday standby.",
+    "createdAt": "2026-01-08T14:00:00.000Z",
+    "updatedAt": "2026-01-08T14:00:00.000Z"
+  },
+  {
+    "id": "seed-5",
+    "name": "Trattoria Bella",
+    "mode": "Eat Out",
+    "category": "Italian",
+    "location": "12 Vine St",
+    "goTo": "Truffle tagliatelle, split the tiramisu",
+    "vibes": ["Date Night", "Special Occasion"],
+    "notes": "Ask for the corner table.",
+    "createdAt": "2026-01-09T19:00:00.000Z",
+    "updatedAt": "2026-01-09T19:00:00.000Z"
+  },
+  {
+    "id": "seed-6",
+    "name": "Sakura Sushi House",
+    "mode": "Eat Out",
+    "category": "Japanese",
+    "location": "Riverside Mall",
+    "goTo": "Omakase for two, extra uni",
+    "vibes": ["Special Occasion"],
+    "notes": "Book ahead on weekends.",
+    "createdAt": "2026-01-10T19:00:00.000Z",
+    "updatedAt": "2026-01-10T19:00:00.000Z"
+  },
+  {
+    "id": "seed-7",
+    "name": "Pierogi Nook",
+    "mode": "Eat Out",
+    "category": "Polish",
+    "location": "Old Town Square",
+    "goTo": "Potato & cheese pierogi, we always split a plate",
+    "vibes": ["Comfort Food", "Budget-Friendly"],
+    "notes": "",
+    "createdAt": "2026-01-11T19:00:00.000Z",
+    "updatedAt": "2026-01-11T19:00:00.000Z"
+  },
+  {
+    "id": "seed-8",
+    "name": "Golden Wok",
+    "mode": "Order In",
+    "category": "Chinese",
+    "deliveryApp": "DoorDash",
+    "goTo": "Kung pao chicken + veggie spring rolls",
+    "vibes": ["Quick & Easy", "Comfort Food"],
+    "notes": "",
+    "createdAt": "2026-01-12T19:00:00.000Z",
+    "updatedAt": "2026-01-12T19:00:00.000Z"
+  },
+  {
+    "id": "seed-9",
+    "name": "Curry House Express",
+    "mode": "Order In",
+    "category": "Indian",
+    "deliveryApp": "Uber Eats",
+    "goTo": "Chicken tikka masala, garlic naan, mango lassi",
+    "vibes": ["Comfort Food"],
+    "notes": "Ask for medium spice, not hot.",
+    "createdAt": "2026-01-13T19:00:00.000Z",
+    "updatedAt": "2026-01-13T19:00:00.000Z"
+  },
+  {
+    "id": "seed-10",
+    "name": "Sweet Tooth Bakery",
+    "mode": "Order In",
+    "category": "Sweet Treat",
+    "deliveryApp": "Uber Eats",
+    "goTo": "Molten lava cake, we always split it",
+    "vibes": ["Date Night", "Budget-Friendly"],
+    "notes": "",
+    "createdAt": "2026-01-14T19:00:00.000Z",
+    "updatedAt": "2026-01-14T19:00:00.000Z"
+  }
+]
