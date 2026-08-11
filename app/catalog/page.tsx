@@ -10,9 +10,9 @@ export default async function CatalogPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader
-        eyebrow="The Archive"
+        eyebrow="Power-Up Stash"
         title="Catalog"
-        subtitle="every place & plate we love"
+        subtitle="collect every place & plate we love"
       />
       <CatalogView initialEntries={entries} />
     </div>

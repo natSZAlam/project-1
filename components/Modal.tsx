@@ -26,7 +26,7 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/40 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/50 backdrop-blur-sm sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
@@ -34,17 +34,19 @@ export default function Modal({
         aria-modal="true"
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
-        className="card-stock max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-2xl sm:rounded-2xl"
+        className="block-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-b-none sm:rounded-b-[20px]"
       >
-        <div className="sticky top-0 flex items-center justify-between border-b border-border bg-card px-5 py-4">
-          <h2 className="font-display text-xl text-primary">{title}</h2>
+        <div className="sticky top-0 flex items-center justify-between border-b-[3px] border-foreground bg-secondary px-5 py-4">
+          <h2 className="font-display text-xl font-bold text-secondary-foreground">
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="cursor-pointer rounded-full p-1.5 text-muted-foreground hover:bg-muted"
+            className="block-btn cursor-pointer rounded-full bg-card p-1.5 text-foreground"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
         <div className="p-5">{children}</div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Dices, RotateCcw, Sparkles } from "lucide-react";
+import { HelpCircle, RotateCcw, Sparkles } from "lucide-react";
 import {
   categoriesForMode,
   type Entry,
@@ -12,11 +12,19 @@ import {
 import { collectVibeTags } from "@/lib/vibes";
 import VibeTag from "@/components/VibeTag";
 import ResultTicket from "@/components/ResultTicket";
+import StarBurst from "@/components/StarBurst";
 
 type ModeFilter = "Either" | Mode;
 type Status = "idle" | "shuffling" | "revealed";
 
-const SHUFFLE_MS = 550;
+const SHUFFLE_MS = 600;
+
+const MODE_FILTER_COLOR: Record<ModeFilter, string> = {
+  Either: "var(--color-primary)",
+  "Eat In": "var(--color-eatin)",
+  "Eat Out": "var(--color-eatout)",
+  "Order In": "var(--color-orderin)",
+};
 
 export default function DecideView({
   initialEntries,
@@ -98,37 +106,40 @@ export default function DecideView({
   const hasNoMatches = matches.length === 0;
 
   return (
-    <div className="px-5 pt-6 pb-10 space-y-6">
+    <div className="px-4 pt-6 pb-10 space-y-6">
       {/* Filters */}
-      <section className="card-stock rounded-xl p-4 space-y-4">
+      <section className="block-panel space-y-4 p-4">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
             Mode
           </p>
           <div className="grid grid-cols-4 gap-1.5">
-            {(["Either", ...MODES] as ModeFilter[]).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => handleModeSelect(m)}
-                className={`cursor-pointer rounded-lg border px-2 py-2 text-xs font-semibold transition-colors ${
-                  mode === m
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-muted text-muted-foreground hover:border-primary/50"
-                }`}
-              >
-                {m}
-              </button>
-            ))}
+            {(["Either", ...MODES] as ModeFilter[]).map((m) => {
+              const active = mode === m;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => handleModeSelect(m)}
+                  className="block-chip px-2 py-2 text-xs font-extrabold"
+                  style={{
+                    backgroundColor: active ? MODE_FILTER_COLOR[m] : "var(--color-card)",
+                    color: active ? "#FFFFFF" : "var(--color-foreground)",
+                  }}
+                >
+                  {m}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
             Category
           </p>
           {mode === "Either" ? (
-            <p className="rounded-lg border border-dashed border-border bg-muted/60 px-3 py-2 text-sm text-muted-foreground">
+            <p className="rounded-2xl border-[3px] border-dashed border-foreground/30 bg-muted px-3 py-2 text-sm font-bold text-muted-foreground">
               Pick a mode above to filter by category.
             </p>
           ) : (
@@ -153,7 +164,7 @@ export default function DecideView({
         </div>
 
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
             Vibe
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -171,15 +182,15 @@ export default function DecideView({
       </section>
 
       {/* Decide action */}
-      <section className="text-center space-y-4">
+      <section className="text-center space-y-5">
         {hasNoMatches ? (
-          <div className="card-stock rounded-xl border-dashed p-6">
-            <p className="font-hand text-2xl text-muted-foreground">
-              Nothing matches those filters yet.
+          <div className="block-panel border-dashed p-6">
+            <p className="font-display text-2xl font-bold text-muted-foreground">
+              Nothing matches those filters yet!
             </p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm font-bold text-muted-foreground">
               Loosen a filter, or{" "}
-              <Link href="/catalog" className="font-semibold text-primary underline">
+              <Link href="/catalog" className="font-extrabold text-primary underline">
                 add something to the Catalog
               </Link>
               .
@@ -187,37 +198,63 @@ export default function DecideView({
           </div>
         ) : (
           <>
-            <p className="text-sm text-muted-foreground">
-              {matches.length} option{matches.length === 1 ? "" : "s"} match
-            </p>
-            <button
-              type="button"
-              onClick={handleDecide}
-              disabled={status === "shuffling"}
-              className="group mx-auto flex h-40 w-40 cursor-pointer flex-col items-center justify-center gap-2 rounded-full border-4 border-primary-foreground/20 bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 active:scale-95 disabled:cursor-wait"
-            >
-              <Dices
-                size={36}
-                className={status === "shuffling" ? "animate-shuffle" : ""}
-                aria-hidden="true"
-              />
-              <span className="font-display text-lg leading-tight px-2">
-                Decide For Us
-              </span>
-            </button>
+            <span className="block-chip inline-block bg-secondary px-3 py-1 text-xs font-extrabold text-secondary-foreground">
+              {matches.length} option{matches.length === 1 ? "" : "s"} in play
+            </span>
+
+            <div className="flex justify-center py-2">
+              <button
+                type="button"
+                onClick={handleDecide}
+                disabled={status === "shuffling"}
+                className={`block-btn relative flex h-44 w-44 flex-col items-center justify-center gap-1 rounded-[28px] bg-secondary text-secondary-foreground disabled:cursor-wait ${
+                  status === "shuffling" ? "animate-qblock-shuffle" : "animate-qblock-idle"
+                }`}
+              >
+                <span
+                  className="absolute h-3 w-3 rounded-full bg-foreground/70"
+                  style={{ top: 10, left: 10 }}
+                  aria-hidden="true"
+                />
+                <span
+                  className="absolute h-3 w-3 rounded-full bg-foreground/70"
+                  style={{ top: 10, right: 10 }}
+                  aria-hidden="true"
+                />
+                <span
+                  className="absolute h-3 w-3 rounded-full bg-foreground/70"
+                  style={{ bottom: 10, left: 10 }}
+                  aria-hidden="true"
+                />
+                <span
+                  className="absolute h-3 w-3 rounded-full bg-foreground/70"
+                  style={{ bottom: 10, right: 10 }}
+                  aria-hidden="true"
+                />
+                <HelpCircle
+                  size={48}
+                  strokeWidth={2.75}
+                  aria-hidden="true"
+                />
+                <span className="font-display text-lg font-bold leading-tight px-2">
+                  Decide For Us
+                </span>
+              </button>
+            </div>
           </>
         )}
       </section>
 
       {/* Result */}
       {status === "revealed" && result && (
-        <section className="space-y-4">
+        <section className="relative space-y-4">
+          <StarBurst key={`burst-${result.id}`} />
           <ResultTicket key={result.id} entry={result} />
           <div className="flex justify-center">
             <button
               type="button"
               onClick={handlePullAgain}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-muted px-4 py-2 text-sm font-semibold text-foreground hover:border-primary/50"
+              className="block-btn inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-extrabold text-accent-foreground"
             >
               <RotateCcw size={15} aria-hidden="true" />
               Pull Again
@@ -227,9 +264,9 @@ export default function DecideView({
       )}
 
       {status === "idle" && !hasNoMatches && !result && (
-        <p className="flex items-center justify-center gap-1.5 text-center text-sm text-muted-foreground">
+        <p className="flex items-center justify-center gap-1.5 text-center text-sm font-bold text-muted-foreground">
           <Sparkles size={14} aria-hidden="true" />
-          Your pick will land here
+          Tap the block to see what&apos;s for dinner
         </p>
       )}
     </div>

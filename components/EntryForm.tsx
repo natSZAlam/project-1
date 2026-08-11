@@ -117,7 +117,7 @@ export default function EntryForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Trattoria Bella"
-          className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
         />
       </div>
 
@@ -131,11 +131,11 @@ export default function EntryForm({
               key={m}
               type="button"
               onClick={() => handleModeChange(m)}
-              className={`cursor-pointer rounded-lg border px-2 py-2 text-xs font-semibold transition-colors ${
-                mode === m
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-muted text-muted-foreground hover:border-primary/50"
-              }`}
+              className="block-chip px-2 py-2 text-xs font-extrabold"
+              style={{
+                backgroundColor: mode === m ? "var(--color-primary)" : "var(--color-card)",
+                color: mode === m ? "#FFFFFF" : "var(--color-foreground)",
+              }}
             >
               {m}
             </button>
@@ -171,7 +171,7 @@ export default function EntryForm({
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="e.g. 12 Vine St"
-            className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
           />
         </div>
       )}
@@ -188,7 +188,7 @@ export default function EntryForm({
             value={deliveryApp}
             onChange={(e) => setDeliveryApp(e.target.value)}
             placeholder="e.g. DoorDash"
-            className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
           />
           <datalist id="delivery-app-suggestions">
             {DELIVERY_APP_SUGGESTIONS.map((app) => (
@@ -212,7 +212,7 @@ export default function EntryForm({
               ? "e.g. Garlic butter steak with roasted potatoes"
               : "e.g. Truffle tagliatelle, split the tiramisu"
           }
-          className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
         />
       </div>
 
@@ -243,12 +243,12 @@ export default function EntryForm({
               }
             }}
             placeholder="Add a custom tag..."
-            className="flex-1 rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="flex-1 rounded-2xl border-[3px] border-foreground bg-card px-3 py-1.5 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
           />
           <button
             type="button"
             onClick={addCustomTag}
-            className="cursor-pointer rounded-lg border border-border bg-muted px-3 py-1.5 text-muted-foreground hover:border-primary/50"
+            className="block-btn rounded-2xl bg-secondary px-3 py-1.5 text-secondary-foreground"
             aria-label="Add tag"
           >
             <Plus size={16} />
@@ -266,12 +266,12 @@ export default function EntryForm({
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           placeholder="Anything else worth remembering"
-          className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="mt-1.5 w-full rounded-2xl border-[3px] border-foreground bg-card px-3 py-2 text-sm font-bold text-foreground outline-none focus:ring-4 focus:ring-primary/25"
         />
       </div>
 
       {error && (
-        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="block-chip bg-destructive px-3 py-2 text-sm font-extrabold text-destructive-foreground">
           {error}
         </p>
       )}
@@ -280,14 +280,14 @@ export default function EntryForm({
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-secondary disabled:opacity-60"
+          className="block-btn flex-1 rounded-2xl bg-primary px-4 py-2.5 text-sm font-extrabold text-primary-foreground"
         >
           {saving ? "Saving..." : initial ? "Save Changes" : "Add Entry"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="cursor-pointer rounded-lg border border-border bg-muted px-4 py-2.5 text-sm font-semibold text-muted-foreground hover:border-primary/50"
+          className="block-btn rounded-2xl bg-card px-4 py-2.5 text-sm font-extrabold text-foreground"
         >
           Cancel
         </button>
@@ -297,7 +297,7 @@ export default function EntryForm({
         <button
           type="button"
           onClick={onDelete}
-          className="w-full cursor-pointer rounded-lg border border-destructive/30 px-4 py-2 text-sm font-semibold text-destructive hover:bg-destructive/10"
+          className="block-btn w-full rounded-2xl bg-destructive px-4 py-2 text-sm font-extrabold text-destructive-foreground"
         >
           Delete Entry
         </button>

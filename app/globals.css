@@ -1,42 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  /* Tonight's Menu — warm terracotta + fresh herb-green, index-card / diner-ticket palette
-     (generated with the ui-ux-pro-max design system reasoning engine) */
-  --color-primary: #9a3412;
-  --color-primary-foreground: #fffbeb;
-  --color-secondary: #c2410c;
-  --color-accent: #059669;
+  /* Tonight's Menu — Mario-block neubrutalism: bold primaries, thick black
+     outlines, hard offset shadows, chunky rounded shapes.
+     (palette + type pairing sourced via the ui-ux-pro-max design system tool) */
+  --color-primary: #e4000f; /* Mario red */
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f7c325; /* coin gold */
+  --color-secondary-foreground: #1a1a1a;
+  --color-accent: #2e7cf6; /* toad blue */
   --color-accent-foreground: #ffffff;
 
-  --color-background: #fbf2e2;
-  --color-foreground: #2a2018;
+  --color-background: #cdeafb; /* sky blue */
+  --color-foreground: #1a1a1a;
 
-  --color-card: #fffdf6;
-  --color-card-foreground: #2a2018;
+  --color-card: #ffffff;
+  --color-card-foreground: #1a1a1a;
 
-  --color-muted: #f3e8d8;
-  --color-muted-foreground: #7a6a58;
+  --color-muted: #eaf7ff;
+  --color-muted-foreground: #3f4a56;
 
-  --color-border: #e6d3ba;
-  --color-destructive: #b3261e;
+  --color-border: #1a1a1a;
+  --color-destructive: #dc2626;
   --color-destructive-foreground: #ffffff;
-  --color-ring: #9a3412;
+  --color-ring: #e4000f;
 
   /* Mode accents */
-  --color-eatin: #4d7c0f;
-  --color-eatout: #9a3412;
-  --color-orderin: #b45309;
+  --color-eatin: #178a41;
+  --color-eatin-bg: #d6f5e1;
+  --color-eatout: #e4000f;
+  --color-eatout-bg: #ffe1df;
+  --color-orderin: #2e7cf6;
+  --color-orderin-bg: #dcebff;
 
-  --font-display: var(--font-playfair);
-  --font-body: var(--font-karla);
-  --font-hand: var(--font-caveat);
+  --font-display: var(--font-fredoka);
+  --font-body: var(--font-nunito);
 }
 
 @theme inline {
   --color-primary: var(--color-primary);
   --color-primary-foreground: var(--color-primary-foreground);
   --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
   --color-accent: var(--color-accent);
   --color-accent-foreground: var(--color-accent-foreground);
   --color-background: var(--color-background);
@@ -49,12 +54,8 @@
   --color-destructive: var(--color-destructive);
   --color-destructive-foreground: var(--color-destructive-foreground);
   --color-ring: var(--color-ring);
-  --color-eatin: var(--color-eatin);
-  --color-eatout: var(--color-eatout);
-  --color-orderin: var(--color-orderin);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
-  --font-hand: var(--font-hand);
 }
 
 * {
@@ -65,13 +66,18 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-body);
-  background-image:
+  font-weight: 600;
+  background-image: radial-gradient(
+      circle at 12px 12px,
+      rgba(255, 255, 255, 0.55) 2px,
+      transparent 0
+    ),
     radial-gradient(
-      circle at 1px 1px,
-      rgba(154, 52, 18, 0.08) 1px,
+      circle at 34px 34px,
+      rgba(255, 255, 255, 0.35) 2px,
       transparent 0
     );
-  background-size: 22px 22px;
+  background-size: 46px 46px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -84,65 +90,122 @@ body {
   }
 }
 
-/* Index-card / order-ticket motifs ------------------------------------- */
+/* Neubrutalist block system --------------------------------------------- */
 
-.card-stock {
+.block-panel {
   background-color: var(--color-card);
-  border: 1px solid var(--color-border);
-  box-shadow:
-    0 1px 2px rgba(42, 32, 24, 0.06),
-    0 4px 10px rgba(42, 32, 24, 0.06);
+  border: 3px solid var(--color-foreground);
+  border-radius: 20px;
+  box-shadow: 5px 5px 0 var(--color-foreground);
 }
 
-.ticket-edge {
-  position: relative;
+.block-btn {
+  border: 3px solid var(--color-foreground);
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--color-foreground);
+  transition: transform 100ms ease, box-shadow 100ms ease;
+  cursor: pointer;
 }
 
-.ticket-edge::before,
-.ticket-edge::after {
-  content: "";
-  position: absolute;
-  top: -8px;
-  width: 16px;
-  height: 16px;
-  background: var(--color-background);
+.block-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-foreground);
+}
+
+.block-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--color-foreground);
+}
+
+.block-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: 4px 4px 0 var(--color-foreground);
+}
+
+.block-chip {
+  border: 2.5px solid var(--color-foreground);
   border-radius: 9999px;
-  border: 1px solid var(--color-border);
+  box-shadow: 2.5px 2.5px 0 var(--color-foreground);
+  transition: transform 100ms ease, box-shadow 100ms ease;
 }
 
-.ticket-edge::before {
-  left: -8px;
+.block-chip-interactive {
+  cursor: pointer;
 }
 
-.ticket-edge::after {
-  right: -8px;
+.block-chip-interactive:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3.5px 3.5px 0 var(--color-foreground);
 }
 
-.perforation {
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--color-border) 0,
-    var(--color-border) 6px,
-    transparent 6px,
-    transparent 13px
-  );
-  height: 1px;
+.block-chip-interactive:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0.5px 0.5px 0 var(--color-foreground);
 }
 
 .stamp {
   font-family: var(--font-display);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
-@keyframes card-pop {
-  0% {
-    opacity: 0;
-    transform: scale(0.9) rotate(-3deg) translateY(10px);
+/* Question-block CTA ----------------------------------------------------- */
+
+@keyframes qblock-idle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+}
+
+.animate-qblock-idle {
+  animation: qblock-idle 2.2s ease-in-out infinite;
+}
+
+@keyframes qblock-shuffle {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  15% {
+    transform: translate(-6px, 2px) rotate(-8deg) scale(1.02);
+  }
+  30% {
+    transform: translate(6px, -4px) rotate(7deg) scale(0.98);
+  }
+  45% {
+    transform: translate(-5px, 3px) rotate(-6deg) scale(1.02);
   }
   60% {
+    transform: translate(5px, -3px) rotate(5deg) scale(0.98);
+  }
+  75% {
+    transform: translate(-3px, 2px) rotate(-3deg) scale(1.01);
+  }
+  90% {
+    transform: translate(2px, -1px) rotate(2deg) scale(1);
+  }
+}
+
+.animate-qblock-shuffle {
+  animation: qblock-shuffle 0.55s ease-in-out;
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.75) rotate(-4deg) translateY(16px);
+  }
+  55% {
     opacity: 1;
-    transform: scale(1.03) rotate(1deg) translateY(-2px);
+    transform: scale(1.06) rotate(2deg) translateY(-4px);
+  }
+  75% {
+    transform: scale(0.97) rotate(-1deg) translateY(2px);
   }
   100% {
     opacity: 1;
@@ -150,29 +213,42 @@ body {
   }
 }
 
-.animate-card-pop {
-  animation: card-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+.animate-pop-in {
+  animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-@keyframes shuffle {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  20% {
-    transform: rotate(-6deg) translateX(-3px);
+@keyframes burst {
+  0% {
+    transform: translate(0, 0) scale(0) rotate(0deg);
+    opacity: 1;
   }
   40% {
-    transform: rotate(5deg) translateX(3px);
+    opacity: 1;
   }
-  60% {
-    transform: rotate(-4deg) translateX(-2px);
-  }
-  80% {
-    transform: rotate(3deg) translateX(2px);
+  100% {
+    transform: translate(var(--tx, 40px), var(--ty, -40px)) scale(1)
+      rotate(200deg);
+    opacity: 0;
   }
 }
 
-.animate-shuffle {
-  animation: shuffle 0.6s ease-in-out;
+.star-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: burst 0.7s ease-out both;
+  pointer-events: none;
+}
+
+@keyframes coin-spin {
+  0% {
+    transform: perspective(200px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(200px) rotateY(360deg);
+  }
+}
+
+.animate-coin-spin {
+  animation: coin-spin 2.4s linear infinite;
 }

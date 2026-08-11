@@ -5,9 +5,21 @@ const MODE_CONFIG: Record<
   Mode,
   { icon: typeof ChefHat; color: string; bg: string }
 > = {
-  "Eat In": { icon: ChefHat, color: "var(--color-eatin)", bg: "#eaf1de" },
-  "Eat Out": { icon: UtensilsCrossed, color: "var(--color-eatout)", bg: "#f3e3d8" },
-  "Order In": { icon: Bike, color: "var(--color-orderin)", bg: "#f6e8d3" },
+  "Eat In": {
+    icon: ChefHat,
+    color: "var(--color-eatin)",
+    bg: "var(--color-eatin-bg)",
+  },
+  "Eat Out": {
+    icon: UtensilsCrossed,
+    color: "var(--color-eatout)",
+    bg: "var(--color-eatout-bg)",
+  },
+  "Order In": {
+    icon: Bike,
+    color: "var(--color-orderin)",
+    bg: "var(--color-orderin-bg)",
+  },
 };
 
 export default function ModeBadge({
@@ -20,10 +32,10 @@ export default function ModeBadge({
   const { icon: Icon, color, bg } = MODE_CONFIG[mode];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${className}`}
+      className={`block-chip inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-extrabold ${className}`}
       style={{ color, backgroundColor: bg }}
     >
-      <Icon size={14} strokeWidth={2.5} aria-hidden="true" />
+      <Icon size={14} strokeWidth={2.75} aria-hidden="true" />
       {mode}
     </span>
   );

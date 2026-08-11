@@ -9,11 +9,11 @@ export default function VibeTag({
   onClick?: () => void;
   as?: "span" | "button";
 }) {
-  const classes = `inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+  const classes = `block-chip inline-flex items-center px-3 py-1 text-xs font-extrabold ${
     selected
-      ? "border-primary bg-primary text-primary-foreground"
-      : "border-border bg-muted text-muted-foreground"
-  } ${onClick ? "cursor-pointer hover:border-primary" : ""}`;
+      ? "bg-primary text-primary-foreground"
+      : "bg-card text-foreground"
+  } ${onClick ? "block-chip-interactive" : ""}`;
 
   if (As === "button") {
     return (

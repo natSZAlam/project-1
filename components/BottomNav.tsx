@@ -14,26 +14,26 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-30 border-t border-border bg-card/95 backdrop-blur supports-backdrop-blur:bg-card/80"
+      className="fixed bottom-0 inset-x-0 z-30 border-t-4 border-foreground bg-card"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="mx-auto max-w-2xl grid grid-cols-2">
+      <div className="mx-auto grid max-w-2xl grid-cols-2 gap-2 p-2">
         {TABS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
             <Link
               key={href}
               href={href}
-              className={`flex flex-col items-center gap-1 py-3 text-sm font-medium transition-colors cursor-pointer ${
+              className={`flex cursor-pointer flex-col items-center gap-0.5 rounded-2xl border-[3px] py-2 text-sm font-extrabold transition-all ${
                 active
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "border-foreground bg-primary text-primary-foreground shadow-[3px_3px_0_var(--color-foreground)]"
+                  : "border-transparent text-muted-foreground hover:border-foreground/30"
               }`}
               aria-current={active ? "page" : undefined}
             >
               <Icon
                 size={22}
-                strokeWidth={active ? 2.5 : 2}
+                strokeWidth={active ? 2.75 : 2.25}
                 aria-hidden="true"
               />
               {label}

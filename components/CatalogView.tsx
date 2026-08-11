@@ -11,6 +11,16 @@ import EntryForm from "@/components/EntryForm";
 
 const TABS = ["All", ...ALL_CATEGORIES];
 
+const MODE_ACCENT: Record<Entry["mode"], string> = {
+  "Eat In": "var(--color-eatin)",
+  "Eat Out": "var(--color-eatout)",
+  "Order In": "var(--color-orderin)",
+};
+
+// Small deterministic "pinned at an angle" wobble so the grid reads like a
+// scrapbooked corkboard instead of a rigid list.
+const ROTATIONS = [-1.5, 1, -0.75, 1.5, -1.25, 0.75];
+
 export default function CatalogView({
   initialEntries,
 }: {
@@ -76,18 +86,18 @@ export default function CatalogView({
   }
 
   return (
-    <div className="px-5 pt-6 pb-10 space-y-5">
-      <div className="-mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1">
+    <div className="px-4 pt-6 pb-10 space-y-5">
+      <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1">
         {TABS.map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`shrink-0 cursor-pointer rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-              activeTab === tab
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-muted text-muted-foreground hover:border-primary/50"
-            }`}
+            className="block-chip block-chip-interactive shrink-0 px-3 py-1.5 text-xs font-extrabold"
+            style={{
+              backgroundColor: activeTab === tab ? "var(--color-primary)" : "var(--color-card)",
+              color: activeTab === tab ? "#FFFFFF" : "var(--color-foreground)",
+            }}
           >
             {tab}
           </button>
@@ -97,63 +107,67 @@ export default function CatalogView({
       <button
         type="button"
         onClick={() => setModal("create")}
-        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 py-3 text-sm font-semibold text-primary hover:bg-primary/5"
+        className="block-btn flex w-full items-center justify-center gap-2 rounded-2xl bg-accent py-3 text-sm font-extrabold text-accent-foreground"
       >
         <Plus size={18} aria-hidden="true" />
         Add to the Catalog
       </button>
 
       {filtered.length === 0 ? (
-        <p className="card-stock rounded-xl border-dashed p-6 text-center font-hand text-2xl text-muted-foreground">
+        <p className="block-panel border-dashed p-6 text-center font-display text-2xl font-bold text-muted-foreground">
           Nothing here yet.
         </p>
       ) : (
-        <ul className="space-y-3">
-          {filtered.map((entry) => (
-            <li key={entry.id}>
+        <ul className="columns-2 gap-3 [column-fill:_balance] sm:columns-2">
+          {filtered.map((entry, index) => (
+            <li key={entry.id} className="mb-3 break-inside-avoid">
               <button
                 type="button"
                 onClick={() => setModal(entry)}
-                className="card-stock group w-full cursor-pointer rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+                style={{
+                  transform: `rotate(${ROTATIONS[index % ROTATIONS.length]}deg)`,
+                  borderTopColor: MODE_ACCENT[entry.mode],
+                  borderTopWidth: "6px",
+                }}
+                className="block-btn group w-full rounded-2xl bg-card p-3 text-left"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-display text-lg text-foreground">
-                      {entry.name}
-                    </p>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                      <ModeBadge mode={entry.mode} />
-                      <span className="rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                        {entry.category}
-                      </span>
-                    </div>
-                  </div>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-display text-base font-bold leading-tight text-foreground">
+                    {entry.name}
+                  </p>
                   <Pencil
-                    size={16}
+                    size={14}
                     className="mt-1 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
                     aria-hidden="true"
                   />
                 </div>
 
+                <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                  <ModeBadge mode={entry.mode} className="px-2 py-0.5 text-[10px]" />
+                  <span className="block-chip bg-muted px-2 py-0.5 text-[10px] font-extrabold text-foreground">
+                    {entry.category}
+                  </span>
+                </div>
+
                 {(entry.location || entry.deliveryApp) && (
-                  <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <p className="mt-2 flex items-center gap-1 text-xs font-bold text-muted-foreground">
                     {entry.mode === "Eat Out" ? (
-                      <MapPin size={14} aria-hidden="true" />
+                      <MapPin size={12} aria-hidden="true" />
                     ) : (
-                      <BikeIcon size={14} aria-hidden="true" />
+                      <BikeIcon size={12} aria-hidden="true" />
                     )}
                     {entry.location || entry.deliveryApp}
                   </p>
                 )}
 
                 {entry.goTo && (
-                  <p className="mt-2 truncate font-hand text-lg leading-none text-secondary">
+                  <p className="mt-2 text-sm font-bold leading-snug text-foreground/80">
                     {entry.goTo}
                   </p>
                 )}
 
                 {entry.vibes.length > 0 && (
-                  <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  <div className="mt-2 flex flex-wrap gap-1">
                     {entry.vibes.map((vibe) => (
                       <VibeTag key={vibe} label={vibe} />
                     ))}
