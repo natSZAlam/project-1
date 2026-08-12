@@ -4,6 +4,9 @@ import ModeBadge from "./ModeBadge";
 import VibeTag from "./VibeTag";
 import DistanceBadges from "./DistanceBadges";
 import LocationBreakdown from "./LocationBreakdown";
+import HoursBadge from "./HoursBadge";
+import CookTimeBadge from "./CookTimeBadge";
+import GroceryListButton from "./GroceryListButton";
 
 export default function ResultTicket({
   entry,
@@ -39,6 +42,8 @@ export default function ResultTicket({
           <span className="block-chip bg-muted px-2.5 py-1 text-xs font-extrabold text-foreground">
             {entry.category}
           </span>
+          <CookTimeBadge cookTime={entry.cookTime} />
+          {entry.mode !== "Eat In" && <HoursBadge hours={entry.hours} />}
         </div>
 
         {entry.mode === "Eat Out" && locations.length === 1 && (
@@ -73,6 +78,12 @@ export default function ResultTicket({
             <p className="mt-1 font-display text-lg font-semibold leading-snug text-foreground">
               {entry.goTo}
             </p>
+          </div>
+        )}
+
+        {entry.mode === "Eat In" && (entry.ingredients?.length ?? 0) > 0 && (
+          <div className="mt-4 flex justify-center">
+            <GroceryListButton entry={entry} />
           </div>
         )}
 

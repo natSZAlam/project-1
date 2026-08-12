@@ -27,6 +27,8 @@ export async function PUT(
       locations,
       photo: raw.photo,
       ingredients: raw.ingredients,
+      cookTime: raw.cookTime,
+      hours: raw.hours,
     };
 
     const entry = await updateEntry(id, input);

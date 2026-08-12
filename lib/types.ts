@@ -55,6 +55,31 @@ export interface EntryLocation {
   geo: GeoPoint | null;
 }
 
+export const COOK_TIMES = ["15 min", "30 min", "45 min", "1 hr+"] as const;
+export type CookTime = (typeof COOK_TIMES)[number];
+
+export type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+export const DAY_KEYS: DayKey[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+export const DAY_LABELS: Record<DayKey, string> = {
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed",
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
+};
+
+export interface DayHours {
+  closed: boolean;
+  /** "HH:MM", 24-hour. Ignored when closed is true. */
+  open: string;
+  /** "HH:MM", 24-hour. A close time <= open time means it crosses midnight. */
+  close: string;
+}
+
+export type WeeklyHours = Partial<Record<DayKey, DayHours>>;
+
 export interface Entry {
   id: string;
   name: string;
@@ -72,6 +97,10 @@ export interface Entry {
   photo?: string;
   /** Eat In only — used by the pantry-aware filter. Free-form ingredient names. */
   ingredients?: string[];
+  /** Eat In only — rough bucket for "what can I make on a tired night" filtering. */
+  cookTime?: CookTime;
+  /** Eat Out / Order In only. Unset means "unknown" — never flagged as closed. */
+  hours?: WeeklyHours;
   createdAt: string;
   updatedAt: string;
 }

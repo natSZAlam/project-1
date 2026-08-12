@@ -3,14 +3,18 @@
 import { useState } from "react";
 import { ImagePlus, Loader2, Plus, X } from "lucide-react";
 import {
+  COOK_TIMES,
   categoriesForMode,
   MODES,
+  type CookTime,
   type Entry,
   type EntryDraft,
   type EntryPrefill,
   type Mode,
+  type WeeklyHours,
 } from "@/lib/types";
 import VibeTag from "@/components/VibeTag";
+import HoursEditor from "@/components/HoursEditor";
 
 const DELIVERY_APP_SUGGESTIONS = [
   "DoorDash",
@@ -55,6 +59,8 @@ export default function EntryForm({
   const [ingredients, setIngredients] = useState(
     (initial?.ingredients ?? []).join(", "),
   );
+  const [cookTime, setCookTime] = useState<CookTime | undefined>(initial?.cookTime);
+  const [hours, setHours] = useState<WeeklyHours | undefined>(initial?.hours);
   const [goTo, setGoTo] = useState(initial?.goTo ?? "");
   const [vibes, setVibes] = useState<string[]>(initial?.vibes ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? "");
@@ -161,6 +167,8 @@ export default function EntryForm({
                 .map((i) => i.trim())
                 .filter(Boolean)
             : undefined,
+        cookTime: mode === "Eat In" ? cookTime : undefined,
+        hours: mode !== "Eat In" ? hours : undefined,
         goTo: goTo.trim() || undefined,
         vibes,
         notes: notes.trim() || undefined,
@@ -294,6 +302,34 @@ export default function EntryForm({
         </div>
       )}
 
+      {mode === "Eat In" && (
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Cook Time
+          </p>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            <VibeTag
+              as="button"
+              label="Not set"
+              selected={!cookTime}
+              onClick={() => setCookTime(undefined)}
+            />
+            {COOK_TIMES.map((ct) => (
+              <VibeTag
+                key={ct}
+                as="button"
+                label={ct}
+                selected={cookTime === ct}
+                onClick={() => setCookTime(ct)}
+              />
+            ))}
+          </div>
+          <p className="mt-1.5 text-xs font-bold text-muted-foreground">
+            Lets you filter for a quick meal on a tired night.
+          </p>
+        </div>
+      )}
+
       {mode === "Eat Out" && (
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -357,6 +393,21 @@ export default function EntryForm({
               <option key={app} value={app} />
             ))}
           </datalist>
+        </div>
+      )}
+
+      {mode !== "Eat In" && (
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Hours
+          </p>
+          <div className="mt-1.5">
+            <HoursEditor value={hours} onChange={setHours} />
+          </div>
+          <p className="mt-1.5 text-xs font-bold text-muted-foreground">
+            Optional — when set, Decide skips this place while it&apos;s
+            closed.
+          </p>
         </div>
       )}
 

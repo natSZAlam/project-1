@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
       locations,
       photo: raw.photo,
       ingredients: raw.ingredients,
+      cookTime: raw.cookTime,
+      hours: raw.hours,
     };
 
     const entry = await createEntry(input);

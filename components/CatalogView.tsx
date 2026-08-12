@@ -16,6 +16,9 @@ import Modal from "@/components/Modal";
 import EntryForm from "@/components/EntryForm";
 import DistanceBadges from "@/components/DistanceBadges";
 import GoogleMapsImportButton from "@/components/GoogleMapsImportButton";
+import HoursBadge from "@/components/HoursBadge";
+import CookTimeBadge from "@/components/CookTimeBadge";
+import GroceryListButton from "@/components/GroceryListButton";
 
 const TABS = ["All", ...ALL_CATEGORIES];
 
@@ -165,15 +168,22 @@ export default function CatalogView({
         <ul className="columns-2 gap-3 [column-fill:_balance] sm:columns-2">
           {filtered.map((entry, index) => (
             <li key={entry.id} className="mb-3 break-inside-avoid">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setModal(entry)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setModal(entry);
+                  }
+                }}
                 style={{
                   transform: `rotate(${ROTATIONS[index % ROTATIONS.length]}deg)`,
                   borderTopColor: MODE_ACCENT[entry.mode],
                   borderTopWidth: "6px",
                 }}
-                className="block-btn group w-full overflow-hidden rounded-2xl bg-card p-0 text-left"
+                className="block-btn group w-full cursor-pointer overflow-hidden rounded-2xl bg-card p-0 text-left"
               >
                 {entry.photo && (
                   // eslint-disable-next-line @next/next/no-img-element -- user-uploaded local file, no known dimensions for next/image
@@ -190,11 +200,16 @@ export default function CatalogView({
                     <p className="font-display text-base font-bold leading-tight text-foreground">
                       {entry.name}
                     </p>
-                    <Pencil
-                      size={14}
-                      className="mt-1 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
-                      aria-hidden="true"
-                    />
+                    <div className="flex shrink-0 items-center gap-1">
+                      {entry.mode === "Eat In" && (entry.ingredients?.length ?? 0) > 0 && (
+                        <GroceryListButton entry={entry} variant="icon" />
+                      )}
+                      <Pencil
+                        size={14}
+                        className="text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                        aria-hidden="true"
+                      />
+                    </div>
                   </div>
 
                   <div className="mt-1.5 flex flex-wrap items-center gap-1">
@@ -202,6 +217,8 @@ export default function CatalogView({
                     <span className="block-chip bg-muted px-2 py-0.5 text-[10px] font-extrabold text-foreground">
                       {entry.category}
                     </span>
+                    <CookTimeBadge cookTime={entry.cookTime} />
+                    {entry.mode !== "Eat In" && <HoursBadge hours={entry.hours} />}
                   </div>
 
                   {entry.mode === "Eat Out" && entry.locations && entry.locations.length > 0 && (
@@ -239,7 +256,7 @@ export default function CatalogView({
                     </div>
                   )}
                 </div>
-              </button>
+              </div>
             </li>
           ))}
         </ul>

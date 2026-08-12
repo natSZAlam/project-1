@@ -10,6 +10,9 @@ A shared decision-making app for figuring out what to eat — for two.
 - **Plan** — a 7-day grid (with week navigation) to line up what you're eating each day in advance, picked from your catalog or typed freeform.
 - **History** — log what you actually ate with an optional amount spent; see a day streak, monthly spend totals, and a full chronological history.
 - **Installable** — has a web app manifest + icons, so "Add to Home Screen" on iOS/Android gives it a real app icon and launches full-screen, no browser chrome.
+- **Hours check** — give an Eat Out/Order In entry a weekly schedule and Decide skips it while it's closed, with an override toggle for planning ahead.
+- **Grocery list** — for any Eat In pick with an ingredients list, generates a shopping list (cross-referenced against your pantry) with one tap to copy.
+- **Cook time tags** — tag Eat In recipes 15 min / 30 min / 45 min / 1 hr+ and filter Decide down to something quick on a tired night.
 
 Built with Next.js (App Router) + Tailwind CSS. Data is stored in `data/entries.json` on the server (photos in `public/uploads/`), so it persists across restarts and is shared by anyone who opens the app — no login required. The design (bold-primary-color, thick-outline "neubrutalism" look, Fredoka + Nunito type, drifting background clouds and coin-flip flourishes) was generated with the [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max) skill's design system reasoning engine.
 
@@ -45,6 +48,14 @@ Give a recipe a comma-separated ingredients list when adding/editing an Eat In e
 ### Plan vs. History
 
 These are two different directions on purpose. **Plan** is forward-looking — what you intend to eat this week — and doesn't affect anything else; assigning a day doesn't create a History entry, and nothing happens automatically when the day passes. **History** is backward-looking — what you actually ate — logged by hand via "Log a Meal" (optionally linked to a catalog entry, with a date and amount spent). The day streak counts consecutive days with at least one History entry; today doesn't break the streak until the day is over, so logging can wait until after dinner.
+
+### Restaurant hours
+
+Hours are entered by hand per entry (Eat Out/Order In, "Hours" section of the form) — "Same every day" for the common case, or per-day if it varies, each day with its own Closed toggle. No Google Places API key involved, on purpose, same as everything else here: it's a manual, free alternative to a live lookup. A close time at or before the open time is read as crossing midnight (e.g. 17:00–01:00). Decide checks this at the moment you load the page and hides anything currently closed — an entry with no hours set is never flagged either way, since "closed" should mean something you actually told the app, not a guess.
+
+### Grocery list
+
+Pulls straight from an entry's ingredients list (same one the pantry filter uses), split into "need to buy" vs. "already have" by checking against your current pantry — nothing new to maintain. Available from the Decide reveal ticket and from a cart icon on Eat In catalog cards. "Copy List" copies only the needed items as plain text, ready to paste into Notes or a chat.
 
 ## Production
 

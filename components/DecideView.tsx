@@ -4,13 +4,16 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { HelpCircle, RotateCcw, Sparkles } from "lucide-react";
 import {
+  COOK_TIMES,
   categoriesForMode,
+  type CookTime,
   type Entry,
   type Mode,
   type PantryState,
   type Settings,
   MODES,
 } from "@/lib/types";
+import { isOpenNow } from "@/lib/hours";
 import { collectVibeTags } from "@/lib/vibes";
 import VibeTag from "@/components/VibeTag";
 import ResultTicket from "@/components/ResultTicket";
@@ -46,6 +49,9 @@ export default function DecideView({
   const [selectedVibes, setSelectedVibes] = useState<string[]>([]);
   const [pantryItems, setPantryItems] = useState<string[]>(pantry.items);
   const [pantryOnly, setPantryOnly] = useState(false);
+  const [cookTimeFilter, setCookTimeFilter] = useState<CookTime | null>(null);
+  const [includeClosed, setIncludeClosed] = useState(false);
+  const [now] = useState(() => new Date());
 
   const [status, setStatus] = useState<Status>("idle");
   const [pool, setPool] = useState<Entry[]>([]);
@@ -65,14 +71,18 @@ export default function DecideView({
         if (needed.length === 0) return false;
         if (!needed.every((ing) => pantryLower.includes(ing.toLowerCase()))) return false;
       }
+      if (mode === "Eat In" && cookTimeFilter && entry.cookTime !== cookTimeFilter) return false;
+      if (!includeClosed && entry.mode !== "Eat In" && isOpenNow(entry.hours, now) === false) {
+        return false;
+      }
       return true;
     });
-  }, [entries, mode, category, selectedVibes, pantryOnly, pantryItems]);
+  }, [entries, mode, category, selectedVibes, pantryOnly, pantryItems, cookTimeFilter, includeClosed, now]);
 
   // Filters changed: the previous pick may no longer be a valid match.
   // Adjusting state during render (React's recommended alternative to an
   // effect here) avoids an extra commit just to clear stale results.
-  const filtersKey = `${mode}|${category}|${selectedVibes.join(",")}|${pantryOnly}`;
+  const filtersKey = `${mode}|${category}|${selectedVibes.join(",")}|${pantryOnly}|${cookTimeFilter}|${includeClosed}`;
   const [prevFiltersKey, setPrevFiltersKey] = useState(filtersKey);
   if (filtersKey !== prevFiltersKey) {
     setPrevFiltersKey(filtersKey);
@@ -194,6 +204,43 @@ export default function DecideView({
               />
             ))}
           </div>
+        </div>
+
+        {mode === "Eat In" && (
+          <div>
+            <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
+              Cook Time
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              <VibeTag
+                as="button"
+                label="Any"
+                selected={cookTimeFilter === null}
+                onClick={() => setCookTimeFilter(null)}
+              />
+              {COOK_TIMES.map((ct) => (
+                <VibeTag
+                  key={ct}
+                  as="button"
+                  label={ct}
+                  selected={cookTimeFilter === ct}
+                  onClick={() => setCookTimeFilter(ct)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div>
+          <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
+            Hours
+          </p>
+          <VibeTag
+            as="button"
+            label="Include closed places"
+            selected={includeClosed}
+            onClick={() => setIncludeClosed((v) => !v)}
+          />
         </div>
 
         <div>
