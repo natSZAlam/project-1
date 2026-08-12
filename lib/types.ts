@@ -93,7 +93,7 @@ export interface Entry {
   goTo?: string;
   vibes: string[];
   notes?: string;
-  /** Relative path under /public, e.g. "/uploads/xyz.jpg" */
+  /** Served from DATA_DIR/uploads, e.g. "/api/photos/xyz.jpg" */
   photo?: string;
   /** Eat In only — used by the pantry-aware filter. Free-form ingredient names. */
   ingredients?: string[];

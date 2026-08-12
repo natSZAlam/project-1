@@ -1,10 +1,9 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { DATA_DIR, SEED_FILE } from "./paths";
 import type { Entry, EntryInput } from "./types";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "entries.json");
-const SEED_FILE = path.join(DATA_DIR, "seed.json");
+const DATA_FILE = path.join(/* turbopackIgnore: true */ DATA_DIR, "entries.json");
 
 // Serializes reads/writes within this process so two quick mutations
 // (e.g. rapid edit + delete) can't interleave and corrupt the file.

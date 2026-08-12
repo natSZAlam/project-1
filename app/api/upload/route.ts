@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { UPLOADS_DIR } from "@/lib/paths";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_BYTES = 8 * 1024 * 1024; // 8MB — plenty for a phone photo, small enough to keep saves snappy
 
 const ALLOWED_TYPES: Record<string, string> = {
@@ -32,10 +32,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Image is too large (max 8MB)" }, { status: 400 });
   }
 
-  await fs.mkdir(UPLOAD_DIR, { recursive: true });
+  await fs.mkdir(UPLOADS_DIR, { recursive: true });
   const filename = `${crypto.randomUUID()}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
-  await fs.writeFile(path.join(UPLOAD_DIR, filename), buffer);
+  await fs.writeFile(path.join(/* turbopackIgnore: true */ UPLOADS_DIR, filename), buffer);
 
-  return NextResponse.json({ path: `/uploads/${filename}` }, { status: 201 });
+  return NextResponse.json({ path: `/api/photos/${filename}` }, { status: 201 });
 }

@@ -9,10 +9,10 @@ import {
   type WeeklyHours,
 } from "./types";
 
-/** Uploaded photos only ever live at /uploads/<uuid>.<ext> (see
+/** Uploaded photos only ever live at /api/photos/<uuid>.<ext> (see
  * app/api/upload/route.ts) — reject anything else so this field can't be
  * used to smuggle in an arbitrary URL or path. */
-const PHOTO_PATH_PATTERN = /^\/uploads\/[a-zA-Z0-9-]+\.(jpg|jpeg|png|webp|gif)$/;
+const PHOTO_PATH_PATTERN = /^\/api\/photos\/[a-zA-Z0-9-]+\.(jpg|jpeg|png|webp|gif)$/;
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 

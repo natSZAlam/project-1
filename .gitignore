@@ -50,4 +50,4 @@ __pycache__/
 /data/pantry.json
 /data/plan.json
 /data/log.json
-/public/uploads/
+/data/uploads/

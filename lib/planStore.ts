@@ -1,9 +1,9 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { DATA_DIR } from "./paths";
 import type { MealPlan, PlannedMeal } from "./types";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const PLAN_FILE = path.join(DATA_DIR, "plan.json");
+const PLAN_FILE = path.join(/* turbopackIgnore: true */ DATA_DIR, "plan.json");
 
 let queue: Promise<unknown> = Promise.resolve();
 function enqueue<T>(task: () => Promise<T>): Promise<T> {
