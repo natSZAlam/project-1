@@ -14,7 +14,7 @@ A shared decision-making app for figuring out what to eat — for two.
 - **Grocery list** — for any Eat In pick with an ingredients list, generates a shopping list (cross-referenced against your pantry) with one tap to copy.
 - **Cook time tags** — tag Eat In recipes 15 min / 30 min / 45 min / 1 hr+ and filter Decide down to something quick on a tired night.
 
-Built with Next.js (App Router) + Tailwind CSS. Data is stored in `data/entries.json` on the server (photos in `public/uploads/`), so it persists across restarts and is shared by anyone who opens the app — no login required. The design (bold-primary-color, thick-outline "neubrutalism" look, Fredoka + Nunito type, drifting background clouds and coin-flip flourishes) was generated with the [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max) skill's design system reasoning engine.
+Built with Next.js (App Router) + Tailwind CSS. Data is stored as JSON files on the server (entries, settings, pantry, plan, history, and uploaded photos), so it persists across restarts and is shared by anyone who opens the app — no login required. The design (bold-primary-color, thick-outline "neubrutalism" look, Fredoka + Nunito type, drifting background clouds and coin-flip flourishes) was generated with the [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max) skill's design system reasoning engine.
 
 ## Running it
 
@@ -25,11 +25,11 @@ npm run dev
 
 Then open http://localhost:3000 (or the same URL from your phone if it's on the same Wi-Fi as the machine running the server, e.g. `http://<your-computer's-local-ip>:3000`).
 
-`data/*.json` (entries, settings, pantry, plan, history) are created automatically on first run — entries seeded with a handful of example entries you can edit or delete — and are gitignored along with `public/uploads/` (your photos), since they're your personal, evolving data rather than app code.
+All mutable data (entries, settings, pantry, plan, history, and uploaded photos) lives under one directory, controlled by the `DATA_DIR` environment variable — defaults to `./data` for local development. The JSON files are created automatically on first run — entries seeded with a handful of example entries you can edit or delete — and `data/` is gitignored (aside from `data/seed.json`, which ships with the app), since it's your personal, evolving data rather than app code.
 
 ### Photos
 
-Uploading a photo on an entry saves it straight to `public/uploads/` and serves it back from there — no third-party image host needed. Accepts JPG/PNG/WEBP/GIF up to 8MB. Removing a photo from an entry just detaches it; the original file is left on disk (there's no cleanup job, since with two people casually adding photos it's not worth the complexity).
+Uploading a photo on an entry saves it to `DATA_DIR/uploads/` and serves it back via a small `/api/photos/[filename]` route — no third-party image host needed. Accepts JPG/PNG/WEBP/GIF up to 8MB. Removing a photo from an entry just detaches it; the original file is left on disk (there's no cleanup job, since with two people casually adding photos it's not worth the complexity).
 
 ### Distances to home & university
 
@@ -63,3 +63,26 @@ Pulls straight from an entry's ingredients list (same one the pantry filter uses
 npm run build
 npm run start
 ```
+
+## Deploying to Render (a real website, ~$7/month)
+
+This turns the app into an always-on website with its own URL, so neither of you needs to keep a computer running. [Render](https://render.com) builds straight from this GitHub repo and gives you a small persistent disk to keep your data safe across deploys — no server administration involved.
+
+1. **Sign up.** Go to [render.com](https://render.com) and sign up (GitHub login is easiest).
+2. **New Web Service.** From the Render dashboard: **New +** → **Web Service** → connect your GitHub account → pick this repo (`project-1`).
+3. **Basic settings**, when prompted:
+   - **Branch**: whichever branch you want live (e.g. `main`)
+   - **Runtime**: Node
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm run start`
+   - **Instance Type**: the cheapest paid tier (Starter, ~$7/month). The free tier works too but spins down when idle, so the app takes ~30s to wake up on first load — fine to try before paying, upgrade if that's annoying.
+4. **Add a persistent disk** (this is the step that makes your data survive redeploys):
+   - In the service settings, find **Disks** → **Add Disk**
+   - **Mount Path**: `/data`
+   - **Size**: 1 GB is plenty (photos are the only thing that grows, and JPEGs are small)
+5. **Add the environment variable** that points the app at that disk:
+   - In **Environment**, add a variable: `DATA_DIR` = `/data`
+6. **Deploy.** Render builds and starts the app automatically. First boot seeds `/data` with the example entries from `data/seed.json`; after that, everything you add lives on the disk and survives every future redeploy.
+7. **Use it.** Render gives you a URL like `https://tonights-menu.onrender.com` — open that on both your phones (Settings → Add to Home Screen on iPhone, or the install prompt on Android, gives it a real app icon).
+
+From then on, pushing new commits to the connected branch triggers an automatic redeploy — your data on the disk is untouched, only the app code updates.
